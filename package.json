@@ -1,0 +1,91 @@
+{
+    "name": "vue3-start-template",
+    "version": "1.0.0",
+    "private": "false",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "lint:eslint": "eslint --ext .vue,.js,jsx,.ts,.tsx ./ --max-warnings 0 --cache --cache-location node_modules/.cache/eslint/ --fix",
+        "lint:stylelint": "stylelint --cache --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
+        "lint": "npm run lint:eslint && npm run lint:stylelint",
+        "format": "prettier --write .",
+        "clean": "rimraf node_modules",
+        "prepare": "husky install",
+        "commit": "git add -A && git cz && git push",
+        "release": "standard-version"
+    },
+    "dependencies": {
+        "@ant-design/icons-vue": "^7.0.1",
+        "@propelauth/javascript": "^2.0.17",
+        "@supabase/supabase-js": "^2.45.3",
+        "ant-design-vue": "^4.2.6",
+        "axios": "^1.7.7",
+        "moment-timezone": "^0.5.46",
+        "nprogress": "^0.2.0",
+        "pinia": "^2.1.7",
+        "pinia-plugin-persistedstate": "^3.2.0",
+        "swiper": "^11.1.15",
+        "tailwindcss": "^3.3.5",
+        "tdesign-vue-next": "^1.6.8",
+        "vue": "^3.3.8",
+        "vue-clipboard3": "^2.0.0",
+        "vue-router": "^4.2.5"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.23.3",
+        "@babel/eslint-parser": "^7.23.3",
+        "@commitlint/cli": "^17.8.1",
+        "@commitlint/config-conventional": "^17.8.1",
+        "@vitejs/plugin-vue": "^4.5.0",
+        "@vitejs/plugin-vue-jsx": "^3.1.0",
+        "autoprefixer": "^10.4.16",
+        "commitizen": "^4.3.0",
+        "cz-git": "^1.7.1",
+        "eslint": "^8.54.0",
+        "eslint-config-alloy": "^5.1.2",
+        "eslint-define-config": "^1.24.1",
+        "eslint-plugin-vue": "^9.18.1",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.1.0",
+        "mockjs": "^1.1.0",
+        "postcss": "^8.4.31",
+        "postcss-html": "^1.5.0",
+        "postcss-import": "^15.1.0",
+        "prettier": "^3.1.0",
+        "sass": "^1.69.5",
+        "standard-version": "^9.5.0",
+        "stylelint": "^15.11.0",
+        "stylelint-config-html": "^1.1.0",
+        "stylelint-config-recess-order": "^4.3.0",
+        "stylelint-config-recommended-scss": "^13.1.0",
+        "stylelint-config-recommended-vue": "^1.5.0",
+        "stylelint-config-standard": "^34.0.0",
+        "stylelint-config-standard-scss": "^11.1.0",
+        "terser": "^5.24.0",
+        "unplugin-auto-import": "^0.16.7",
+        "unplugin-vue-components": "^0.25.2",
+        "vite": "^4.5.0",
+        "vite-plugin-compression": "^0.5.1",
+        "vite-plugin-mock": "^3.0.0",
+        "vite-plugin-restart": "^0.3.1",
+        "vite-plugin-svg-icons": "^2.0.1",
+        "vite-plugin-vue-setup-extend": "^0.4.0",
+        "vue-eslint-parser": "^9.3.2"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "browserslist": {
+        "production": [
+            "> 1%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}
