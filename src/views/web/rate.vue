@@ -128,15 +128,6 @@
     defineExpose({
         openModal,
     });
-    // onMounted(async () => {
-    //     if (!uid.value) {
-    //         authClient.redirectToLoginPage({
-    //             postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || 'http://localhost:8989/',
-    //         });
-    //     } else {
-    //         getData();
-    //     }
-    // });
 </script>
 <style lang="scss" scoped>
     .content {

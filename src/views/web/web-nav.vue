@@ -56,7 +56,7 @@
     };
     const singIn = () => {
         authClient.redirectToLoginPage({
-            postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || 'http://localhost:8989/',
+            postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || window.location.href,
         });
     };
     onMounted(async () => {});
