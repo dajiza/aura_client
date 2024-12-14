@@ -102,7 +102,7 @@
             message.warning('You have already rated.');
             return;
         }
-        let { data: patientsData } = await supabase.from('patients').select('*').eq('email', email.value);
+        let { data: patientsData } = await supabase.from('patients').select('*').eq('pid', noteData[0].pid);
         await supabase.from('rates').insert({
             hid: noteData[0].hid,
             notes_id: noteData[0].id,

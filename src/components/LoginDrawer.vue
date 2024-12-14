@@ -45,8 +45,9 @@
     import { useUserStore } from '@/stores/modules/system/user';
     import { clearAllCoolies } from '@/utils/cookie-util';
     import { localClear } from '@/utils/local-util';
-    const uid = ref(useUserStore().getUid);
+    import { message } from 'ant-design-vue';
 
+    const uid = ref(useUserStore().getUid);
     const open = ref(false);
     const openModal = async () => {
         open.value = true;
@@ -65,6 +66,7 @@
         localClear();
         clearAllCoolies();
         useUserStore().logout();
+        message.success('Logout successfully');
         router.push({ path: '/' });
         closeModal();
     };

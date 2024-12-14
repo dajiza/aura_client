@@ -30,17 +30,23 @@ export default [
         name: 'note',
         component: () => import('@/views/pastDetail.vue'),
     },
-    // {
-    //     path: '/rate',
-    //     name: 'rate',
-    //     component: () => import('@/views/rate.vue'),
-    // },
     {
         path: '/rate-list',
         name: 'rate-list',
         component: () => import('@/views/rateList.vue'),
     },
+    {
+        path: '/rate-page',
+        name: 'rate-page',
+        component: () => import('@/views/ratePage.vue'),
+    },
+    {
+        path: '/rate-success',
+        name: 'rate-success',
+        component: () => import('@/views/rateSuccess.vue'),
+    },
 
+    // web
     {
         path: '/web/',
         name: 'web-home',
@@ -75,5 +81,25 @@ export default [
         path: '/web/rate-list',
         name: 'web-rate-list',
         component: () => import('@/views/web/rateList.vue'),
+    },
+    {
+        path: '/web/rate-page',
+        name: 'web-rate-page',
+        component: () => import('@/views/web/ratePage.vue'),
+    },
+    {
+        path: '/web/rate-success',
+        name: 'web-rate-success',
+        component: () => import('@/views/web/rateSuccess.vue'),
+    },
+    {
+        path: '/web/signup',
+        name: 'web-signup',
+        component: () => import('@/views/signup.vue'),
+    },
+    {
+        path: '/signup',
+        name: 'signup',
+        component: () => import('@/views/signup.vue'),
     },
 ];

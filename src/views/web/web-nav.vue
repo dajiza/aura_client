@@ -38,8 +38,9 @@
     import { supabase, authClient } from '@/utils/supabase';
     import { clearAllCoolies } from '@/utils/cookie-util';
     import { localClear } from '@/utils/local-util';
-    const uid = ref(useUserStore().getUid);
+    import { message } from 'ant-design-vue';
 
+    const uid = ref(useUserStore().getUid);
     const route = useRoute();
     const userInfo = ref(useUserStore().getUserInfo);
     const logout = () => {
@@ -47,6 +48,7 @@
         localClear();
         clearAllCoolies();
         useUserStore().logout();
+        message.success('Logout successfully');
         router.push({ path: '/web/' });
     };
     const account = () => {

@@ -122,7 +122,17 @@ export const useUserStore = defineStore({
             this.token = '';
             this.menuList = [];
             this.tagNav = [];
-            this.userInfo = {};
+            this.uid = '';
+            this.avatar = '';
+            this.email = '';
+            this.first_name = '';
+            this.last_name = '';
+            this.role = '';
+            this.hid = '';
+            this.h_name = '';
+            this.timezone = '';
+            this.loginName = '';
+            this.actualName = '';
             localClear();
         },
         //设置登录信息

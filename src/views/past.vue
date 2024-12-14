@@ -58,14 +58,6 @@
         });
     });
 
-    const onTag = (tag) => {
-        if (!disciplineActive.value.includes(tag)) {
-            disciplineActive.value.push(tag);
-        } else {
-            disciplineActive.value.splice(disciplineActive.value.indexOf(tag), 1);
-        }
-    };
-
     const getData = async () => {
         SmartLoading.show();
         let { data: patientsData } = await supabase.from('patients').select('*').eq('email', email.value);
