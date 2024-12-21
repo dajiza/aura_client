@@ -143,7 +143,7 @@
         let { data, error } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
         let { data: servicesData } = await supabase.from('service').select().eq('hid', data[0].hid).eq('show', true);
         let { data: productsData } = await supabase.from('product').select().eq('hid', data[0].hid).eq('show', true);
-        let { data: staffData } = await supabase.from('users').select().eq('hid', data[0].hid).in('role', ['practitioner']);
+        let { data: staffData } = await supabase.from('users').select().eq('hid', data[0].hid).eq('display', true);
         let { data: ratesData, count } = await supabase.from('rates').select().eq('hid', data[0].hid);
 
         detail.value = data[0];
