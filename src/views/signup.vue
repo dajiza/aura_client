@@ -5,7 +5,7 @@
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
     authClient.redirectToSignupPage({
-        postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || window.location.href,
+        postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
     });
     onMounted(async () => {});
 </script>

@@ -62,7 +62,7 @@
     .content {
         min-height: 100%;
         border-radius: 0;
-        margin: 10px 20px 0;
+        margin: 10px auto 0;
         border-radius: 12px;
     }
     .clinic {

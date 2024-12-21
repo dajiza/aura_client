@@ -18,7 +18,7 @@
 
     const singIn = () => {
         authClient.redirectToLoginPage({
-            postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || window.location.href,
+            postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL || window.location.href,
         });
     };
 </script>

@@ -58,7 +58,7 @@
     const afterOpenChange = () => {};
     const singIn = () => {
         authClient.redirectToLoginPage({
-            postLoginRedirectUrl: import.meta.env.PROPELAUTH_REDIRECT_URL || window.location.href,
+            postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
         });
     };
     const logout = () => {
