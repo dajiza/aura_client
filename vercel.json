@@ -1,9 +1,6 @@
 {
     "cleanUrls": true,
-    "rewrites": [
-        { "source": "/:path*", "destination": "/index.html" },
-        { "source": "/web/:path*", "destination": "/index.html" }
-    ],
+
     "headers": [
         {
             "source": "/api/(.*)",
