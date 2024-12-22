@@ -22,16 +22,18 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-    let pathArr = to.path.split('/');
-    if (isMobile && pathArr[1] == 'web') {
-        pathArr.splice(1, 1);
-        to.path = pathArr.join('/');
-        next({ path: to.path, query: to.query });
-    } else if (!isMobile && pathArr[1] != 'web') {
-        next({ path: '/web' + to.path, query: to.query });
-    } else {
-        next();
-    }
+    next();
+
+    // let pathArr = to.path.split('/');
+    // if (isMobile && pathArr[1] == 'web') {
+    //     pathArr.splice(1, 1);
+    //     to.path = pathArr.join('/');
+    //     next({ path: to.path, query: to.query });
+    // } else if (!isMobile && pathArr[1] != 'web') {
+    //     next({ path: '/web' + to.path, query: to.query });
+    // } else {
+    //     next();
+    // }
 });
 
 router.afterEach(() => {
