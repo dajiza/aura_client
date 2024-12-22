@@ -14,8 +14,9 @@ NProgress.configure({
     minimum: 0.3, // 初始化时的最小百分比
 });
 
+// import.meta.env.BASE_URL
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(),
     routes,
     strict: true,
 });
