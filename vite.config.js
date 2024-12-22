@@ -20,7 +20,7 @@ const url = 'http://localhost:8989/'; // 本地mock
 export default defineConfig(({ command }) => {
     const isBuild = command === 'build';
     return {
-        base: './',
+        base: '/',
         plugins: [
             // vue支持
             vue(),
