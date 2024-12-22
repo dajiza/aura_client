@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import routes from './routes';
@@ -15,13 +15,12 @@ NProgress.configure({
 });
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(import.meta.env.BASE_URL),
     routes,
     strict: true,
 });
 
 router.beforeEach((to, from, next) => {
-    console.log('🚀 ~ router.beforeEach ~ to:', to);
     NProgress.start();
     let pathArr = to.path.split('/');
     if (isMobile && pathArr[1] == 'web') {

@@ -1,6 +1,11 @@
 // 页面路由
 export default [
     {
+        path: '/:pathMatch(.*)',
+        name: 'all',
+        component: () => import('@/views/home.vue'),
+    },
+    {
         path: '/',
         name: 'home',
         component: () => import('@/views/home.vue'),
