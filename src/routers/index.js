@@ -22,7 +22,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-
     let pathArr = to.path.split('/');
     if (isMobile && pathArr[1] == 'web') {
         pathArr.splice(1, 1);
