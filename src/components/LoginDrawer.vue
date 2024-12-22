@@ -63,7 +63,6 @@
     };
     const logout = () => {
         authClient.logout();
-        localClear();
         clearAllCoolies();
         useUserStore().logout();
         message.success('Logout successfully');

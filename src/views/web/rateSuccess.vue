@@ -15,11 +15,17 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
+    import router from '@/routers/index';
 
-    const singIn = () => {
-        authClient.redirectToLoginPage({
-            postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL || window.location.href,
-        });
+    const singIn = async () => {
+        let status = await authClient.getAuthenticationInfoOrNull();
+        if (status) {
+            router.push({ path: '/' });
+        } else {
+            authClient.redirectToLoginPage({
+                postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL || window.location.href,
+            });
+        }
     };
 </script>
 <style lang="scss" scoped>
