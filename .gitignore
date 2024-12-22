@@ -34,3 +34,4 @@ coverage
 # Json
 package-lock.json
 .eslintrc-auto-import.json
+.vercel
