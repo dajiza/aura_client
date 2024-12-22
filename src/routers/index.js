@@ -13,27 +13,26 @@ NProgress.configure({
     trickleSpeed: 200, // 自动递增间隔
     minimum: 0.3, // 初始化时的最小百分比
 });
-// import.meta.env.BASE_URL
+
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes,
     strict: true,
 });
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-    next();
 
-    // let pathArr = to.path.split('/');
-    // if (isMobile && pathArr[1] == 'web') {
-    //     pathArr.splice(1, 1);
-    //     to.path = pathArr.join('/');
-    //     next({ path: to.path, query: to.query });
-    // } else if (!isMobile && pathArr[1] != 'web') {
-    //     next({ path: '/web' + to.path, query: to.query });
-    // } else {
-    //     next();
-    // }
+    let pathArr = to.path.split('/');
+    if (isMobile && pathArr[1] == 'web') {
+        pathArr.splice(1, 1);
+        to.path = pathArr.join('/');
+        next({ path: to.path, query: to.query });
+    } else if (!isMobile && pathArr[1] != 'web') {
+        next({ path: '/web' + to.path, query: to.query });
+    } else {
+        next();
+    }
 });
 
 router.afterEach(() => {
