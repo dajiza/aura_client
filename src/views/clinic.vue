@@ -118,8 +118,8 @@
     let products = ref([]);
     let staffs = ref([]);
     let rates = ref([]);
-    let staffAvatar = computed(() => '/src/assets/img/staff.png');
-    let gallery = computed(() => '/src/assets/img/gallery.png');
+    let staffAvatar = await import('@/assets/img/staff.png');
+    let gallery = await import('@/assets/img/gallery.png');
 
     const book = () => {
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
