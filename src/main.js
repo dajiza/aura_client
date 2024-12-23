@@ -32,7 +32,7 @@ async function getLoginInfo() {
                     email: user.email,
                     first_name: user.firstName,
                     last_name: user.lastName,
-                    // role: 'patient',
+                    role: 'patient',
                 })
                 .select();
             userSupabase = res.data[0];
