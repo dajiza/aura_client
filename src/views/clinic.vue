@@ -105,6 +105,8 @@
     import useClipboard from 'vue-clipboard3';
     import { message, Modal } from 'ant-design-vue';
     import moment from 'moment-timezone';
+    import staffAvatar from '@/assets/img/staff.png';
+    import gallery from '@/assets/img/gallery.png';
 
     let modules = [Pagination];
 
@@ -118,8 +120,6 @@
     let products = ref([]);
     let staffs = ref([]);
     let rates = ref([]);
-    let staffAvatar = await import('@/assets/img/staff.png');
-    let gallery = await import('@/assets/img/gallery.png');
 
     const book = () => {
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
