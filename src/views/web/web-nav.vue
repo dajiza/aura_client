@@ -1,6 +1,6 @@
 <template>
     <div class="web-nav">
-        <img src="/src/assets/img/logo.svg" alt="" />
+        <img src="/src/assets/img/logo.svg" alt="" style="cursor: pointer" @click="router.push({ path: '/web/' })" />
         <div style="margin-left: auto">
             <div class="menu">
                 <div :class="['menu-item', { active: route.path === '/web/' }]" @click="router.push({ path: '/web/' })">Home</div>

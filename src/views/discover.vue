@@ -23,7 +23,7 @@
             <div class="list">
                 <div class="card" v-for="item in clinicFilter" :key="item.id" @click="gotoClinic(item)">
                     <div class="logo">
-                        <img :src="item.logo" alt="" />
+                        <img :src="item.logo || logo" alt="" />
                     </div>
                     <div class="info">
                         <div>{{ item.name }}</div>
@@ -34,8 +34,8 @@
                         </div>
                         <div class="address">{{ item.address }}</div>
                     </div>
-                    <div class="banner" v-if="item?.gallery">
-                        <img class="full-img" :src="item?.gallery[0]" alt="" />
+                    <div class="banner">
+                        <img class="full-img" :src="item?.gallery ? item?.gallery[0] : gallery" alt="" />
                     </div>
                 </div>
             </div>
@@ -55,6 +55,8 @@
     let discipline = ref([]);
     let disciplineActive = ref([]);
     let sort = ref('reviews');
+    let logo = ref('/src/assets/img/logo3.jpeg');
+    let gallery = ref('/src/assets/img/gallery.png');
 
     const openLogin = () => {
         loginDrawer.value.openModal();

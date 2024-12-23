@@ -3,7 +3,7 @@
     <div class="container">
         <div class="content">
             <swiper class="swiper" :modules="modules" :pagination="{ clickable: true }">
-                <swiper-slide v-for="(item, index) in detail.gallery" :key="index">
+                <swiper-slide v-for="(item, index) in detail.gallery || [gallery]" :key="index">
                     <img :src="item" alt="" style="width: 100%" />
                 </swiper-slide>
                 <div class="swiper-pagination"></div>
@@ -66,7 +66,7 @@
                 <div class="summary">
                     <div class="summary-title"><UserOutlined class="icon" />Our team</div>
                     <div class="staff" v-for="item in staffs">
-                        <img class="avatar" :src="item.avatar" alt="" />
+                        <img class="avatar" :src="item.avatar || staffAvatar" alt="" />
                         <div>
                             <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px">{{ item.first_name }} {{ item.last_name }}</div>
                             <div style="color: #757575; font-size: 12px">{{ item.introduction }}</div>
@@ -133,6 +133,8 @@
     let products = ref([]);
     let staffs = ref([]);
     let rates = ref([]);
+    let staffAvatar = ref('/src/assets/img/staff.png');
+    let gallery = ref('/src/assets/img/gallery.png');
 
     const book = () => {
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);

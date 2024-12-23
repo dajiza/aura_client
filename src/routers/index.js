@@ -23,6 +23,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
+    document.title = `${to.meta.title} | Aura Cure` || 'Aura Cure';
 
     let pathArr = to.path.split('/');
     if (isMobile && pathArr[1] == 'web') {
