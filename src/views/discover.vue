@@ -50,13 +50,13 @@
     import { onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
+    import logo from '@/assets/img/logo3.jpeg';
+    import gallery from '@/assets/img/gallery.png';
 
     let clinic = ref([]);
     let discipline = ref([]);
     let disciplineActive = ref([]);
     let sort = ref('reviews');
-    let logo = ref('/src/assets/img/logo3.jpeg');
-    let gallery = ref('/src/assets/img/gallery.png');
 
     const openLogin = () => {
         loginDrawer.value.openModal();
