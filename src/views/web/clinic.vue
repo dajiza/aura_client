@@ -69,7 +69,7 @@
                         <img class="avatar" :src="item.avatar || staffAvatar" alt="" />
                         <div>
                             <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px">{{ item.first_name }} {{ item.last_name }}</div>
-                            <div style="color: #757575; font-size: 12px">{{ item.introduction }}</div>
+                            <div style="color: #757575; font-size: 14px">{{ item.introduction }}</div>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                                 <StarFilled style="font-size: 14px" />
                             </template>
                         </a-rate>
-                        <div style="margin-top: 4px">{{ item.feedback || 'This is a rating-only review' }}</div>
+                        <div style="margin-top: 4px; font-size: 14px">{{ item.feedback || 'This is a rating-only review' }}</div>
                         <div class="user">
                             <img class="user-avatar" :src="item.avatar" alt="" v-if="item.avatar" />
                             <div class="user-avatar" v-if="!item.avatar">
@@ -217,7 +217,7 @@
     }
     .swiper {
         position: relative;
-        height: 175px;
+        height: 300px;
         .back {
             position: absolute;
             top: 20px;
@@ -225,6 +225,9 @@
             z-index: 1;
             display: flex;
             align-items: center;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background-color: #00796b;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -251,12 +254,13 @@
         }
         .name {
             margin-bottom: 10px;
+            font-weight: bold;
             font-size: 22px;
         }
         .info {
             margin-bottom: 4px;
             color: #757575;
-            font-size: 18px;
+            font-size: 16px;
         }
         .rate {
             display: flex;
@@ -312,7 +316,7 @@
                     top: 10px;
                     right: 10px;
                     color: #757575;
-                    font-size: 20px;
+                    font-size: 14px;
                     cursor: pointer;
                 }
                 .a-rate {

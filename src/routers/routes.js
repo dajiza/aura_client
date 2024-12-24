@@ -104,7 +104,7 @@ export default [
         meta: {
             title: 'Blog',
         },
-        component: () => import('@/views/web/blog.vue'),
+        component: () => import('@/views/blog.vue'),
     },
     {
         path: '/web/clinic',
@@ -128,7 +128,7 @@ export default [
         meta: {
             title: 'Note',
         },
-        component: () => import('@/views/web/pastDetail.vue'),
+        component: () => import('@/views/pastDetail.vue'),
     },
     {
         path: '/web/rate-list',

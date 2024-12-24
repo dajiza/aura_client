@@ -2,7 +2,7 @@
     <WebNav></WebNav>
     <div class="container">
         <div class="content">
-            <div style="">Find clinic</div>
+            <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
             <div class="clinic">
                 <div :class="['item', disciplineActive.includes(item) ? 'active' : '']" v-for="item in discipline" @click="onTag(item)">
                     {{ item }}

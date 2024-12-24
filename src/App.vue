@@ -13,7 +13,7 @@
                     <component :is="Component" />
                 </transition>
             </router-view>
-            <div class="foot">Powered by Aura Cure Inc.</div>
+            <div class="foot">Powered by Aura Cure Platform Inc.</div>
         </div>
     </a-config-provider>
 </template>

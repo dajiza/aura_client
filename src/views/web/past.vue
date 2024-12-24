@@ -10,7 +10,7 @@
                     <div>{{ moment(item.created_at).format('MMM D, YYYY') }}</div>
                 </div>
                 <div style="margin-left: auto">
-                    <div class="tag" v-if="item.instructions.patientInstruction || item.instructions.notes || item.instructions.init">
+                    <div class="tag" v-if="item.instructions.patientInstruction || item.instructions.notes">
                         <img class="chat" src="/src/assets/img/chat-w.svg" alt="" />
                         Message from clinic
                     </div>

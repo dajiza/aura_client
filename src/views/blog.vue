@@ -12,15 +12,19 @@
             Back to home
         </div>
         <div class="content">
-            <div class="img" v-if="blog.type == 'image'">
-                <img alt="" v-for="item in blog.image" :src="item" />
-            </div>
+            <div class="topic">{{ blog.title }}</div>
+            <div class="subtitle">{{ blog.subtitle }}</div>
+            <swiper class="img" :modules="modules" :pagination="{ clickable: true }" v-if="blog.type == 'image'">
+                <swiper-slide v-for="(item, index) in blog.image" :key="index">
+                    <img :src="item" alt="" style="width: 100%" />
+                </swiper-slide>
+                <div class="swiper-pagination"></div>
+            </swiper>
             <div class="img" v-if="blog.type == 'video'">
                 <video controls :src="blog.video[0]"></video>
             </div>
-            <div class="topic">{{ blog.title }}</div>
-            <div class="subtitle">{{ blog.subtitle }}</div>
-            <div style="line-height: 18px; word-break: break-all" v-html="blog.content"></div>
+
+            <div style="line-height: 20px; word-break: break-all; font-size: 16px" v-html="blog.content"></div>
         </div>
         <LoginDrawer ref="loginDrawer"></LoginDrawer>
     </div>
@@ -33,6 +37,11 @@
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { useRoute } from 'vue-router';
+    import { Swiper, SwiperSlide } from 'swiper/vue';
+    import { Pagination } from 'swiper/modules';
+    import 'swiper/css';
+    import 'swiper/css/pagination';
+    let modules = [Pagination];
 
     const route = useRoute();
     let id = ref(route.query.id);
@@ -64,12 +73,12 @@
         margin-bottom: 20px;
         color: #00796b;
         font-weight: bold;
-        font-size: 22px;
+        font-size: 24px;
     }
     .subtitle {
         margin-bottom: 20px;
         color: #757575;
-        font-size: 14px;
+        font-size: 18px;
     }
     .img {
         width: 100%;

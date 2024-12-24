@@ -13,12 +13,7 @@
                     <div>{{ moment(item.created_at).format('MMM D, YYYY') }}</div>
                 </div>
                 <div style="margin-left: auto">
-                    <img
-                        class="chat"
-                        src="/src/assets/img/chat.svg"
-                        alt=""
-                        v-if="item.instructions.patientInstruction || item.instructions.notes || item.instructions.init"
-                    />
+                    <img class="chat" src="/src/assets/img/chat.svg" alt="" v-if="item.instructions.patientInstruction || item.instructions.notes" />
                 </div>
                 <a-button type="primary" ghost style="margin-left: 10px">View</a-button>
             </div>

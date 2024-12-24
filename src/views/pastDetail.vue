@@ -20,13 +20,12 @@
             </div>
             <div class="line"></div>
             <div style="margin-bottom: 30px; color: #00796b; font-weight: bold; font-size: 16px">Message from practitioner:</div>
-            <div class="row">{{ detail?.instructions?.patientInstruction }}</div>
-            <div class="row">{{ detail?.instructions?.notes }}</div>
-            <div class="row">{{ detail?.instructions?.init }}</div>
+            <div class="row" v-if="detail?.instructions?.patientInstruction.title">
+                {{ detail?.instructions?.patientInstruction.title }}: {{ detail?.instructions?.patientInstruction.content }}
+            </div>
+            <div class="row" v-else>{{ detail?.instructions?.patientInstruction }}</div>
 
-            <a-button type="primary" ghost size="large" style="width: 100%; margin-top: 40px" @click="openRate" v-if="!detail.is_rate">
-                Leave a review
-            </a-button>
+            <a-button type="primary" ghost size="large" style="width: 100%; margin-top: 40px" @click="openRate"> Leave a review </a-button>
             <a-button
                 type="primary"
                 size="large"
@@ -51,6 +50,7 @@
     import moment from 'moment-timezone';
     import { useRoute } from 'vue-router';
     import RateModal from './rate.vue';
+    import { message } from 'ant-design-vue';
 
     const route = useRoute();
 
@@ -79,7 +79,10 @@
         }
     };
     const openRate = () => {
-        console.log('🚀 ~ openRate ~ rateModalRef:', rateModalRef);
+        if (detail.value.is_rate) {
+            message.warning('You have already rated this visit');
+            return;
+        }
         rateModalRef.value.openModal(id.value);
     };
     onMounted(async () => {
