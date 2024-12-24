@@ -28,6 +28,8 @@ body {
     flex-direction: column;
     flex-grow: 1;
     margin: 0 auto;
+    height: calc(100vh - 176px);
+
     .nav {
         position: relative;
         display: flex;

@@ -149,23 +149,49 @@
         } catch (e) {}
     };
 
+    // const getData = async () => {
+    //     SmartLoading.show();
+    //     let { data, error } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
+    //     let { data: servicesData } = await supabase.from('service').select().eq('hid', data[0].hid).eq('show', true);
+    //     let { data: productsData } = await supabase.from('product').select().eq('hid', data[0].hid).eq('show', true);
+    //     let { data: staffData } = await supabase.from('users').select().eq('hid', data[0].hid).eq('display', true);
+    //     let { data: ratesData, count } = await supabase.from('rates').select().eq('hid', data[0].hid);
+
+    //     detail.value = data[0];
+    //     services.value = servicesData;
+    //     products.value = productsData;
+    //     staffs.value = staffData;
+    //     rates.value = ratesData;
+
+    //     SmartLoading.hide();
+    // };
     const getData = async () => {
         SmartLoading.show();
-        let { data, error } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
-        let { data: servicesData } = await supabase.from('service').select().eq('hid', data[0].hid).eq('show', true);
-        let { data: productsData } = await supabase.from('product').select().eq('hid', data[0].hid).eq('show', true);
-        let { data: staffData } = await supabase.from('users').select().eq('hid', data[0].hid).eq('display', true);
-        let { data: ratesData, count } = await supabase.from('rates').select().eq('hid', data[0].hid);
+        let response = await axios({
+            url: `${import.meta.env.VITE_APP_API_URL}/api/clinic-detail`,
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            data: { hid: hid.value },
+        });
 
-        detail.value = data[0];
-        services.value = servicesData;
-        products.value = productsData;
-        staffs.value = staffData;
-        rates.value = ratesData;
+        detail.value = response.data.res.detail;
+        services.value = response.data.res.services;
+        products.value = response.data.res.products;
+        staffs.value = response.data.res.staffs;
+        rates.value = response.data.res.rates;
 
         SmartLoading.hide();
     };
     const report = async (item) => {
+        if (!uid.value) {
+            message.warning('Please login first');
+            authClient.redirectToLoginPage({
+                postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+            });
+            return;
+        }
         Modal.confirm({
             title: 'Confirm to report review',
             content: '',
@@ -182,13 +208,7 @@
         });
     };
     onMounted(async () => {
-        if (!uid.value) {
-            authClient.redirectToLoginPage({
-                postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
-            });
-        } else {
-            getData();
-        }
+        getData();
     });
 </script>
 <style lang="scss" scoped>

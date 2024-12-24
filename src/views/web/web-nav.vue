@@ -67,6 +67,7 @@
     .web-nav {
         display: flex;
         align-items: center;
+        flex-shrink: 0;
         margin-bottom: 30px;
         padding: 0 50px;
         width: 100%;
