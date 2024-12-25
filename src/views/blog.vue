@@ -24,7 +24,7 @@
                 <video controls :src="blog.video[0]"></video>
             </div>
 
-            <div style="line-height: 20px; word-break: break-all; font-size: 16px" v-html="blog.content"></div>
+            <div style="line-height: 20px; font-size: 16px" v-html="blog.content"></div>
         </div>
         <LoginDrawer ref="loginDrawer"></LoginDrawer>
     </div>

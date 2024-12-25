@@ -77,7 +77,9 @@
                             </div>
                             <div style="margin-left: 10px">
                                 <div>{{ item.first_name.slice(0, 3) }}***</div>
-                                <div style="color: #b3b3b3; margin-top: 4px">{{ moment(detail?.create_at).format('MMM D, YYYY') }}</div>
+                                <div style="color: #b3b3b3; margin-top: 4px">
+                                    {{ moment(detail?.created_at).tz(detail?.timezone).format('MMM D, YYYY') }}
+                                </div>
                             </div>
                         </div>
                         <WarningFilled class="report" @click="report(item)" />
