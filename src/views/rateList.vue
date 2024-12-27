@@ -4,7 +4,7 @@
             <ArrowLeftOutlined id="menu" @click="goBack" />
             <span class="title">{{ detail.name }}</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div class="box">
                 <div class="summary">
                     <div class="summary-title">
@@ -46,7 +46,8 @@
     import router from '@/routers/index';
     import moment from 'moment-timezone';
     import { message, Modal } from 'ant-design-vue';
-
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     const uid = ref(useUserStore().getUid);
     const route = useRoute();
 

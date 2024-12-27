@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div class="nav">
                 <span class="title">Aura Cure</span>
             </div>
@@ -16,6 +16,9 @@
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
     import router from '@/routers/index';
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     const singIn = async () => {
         let status = await authClient.getAuthenticationInfoOrNull();
         if (status) {
@@ -35,15 +38,15 @@
         }
     }
     .content {
-        min-height: 100%;
-        border-radius: 0;
-        width: 100%;
-        margin: 0;
-        background-color: #e1eee6;
         display: flex;
-        flex-direction: column;
-        color: #00796b;
         align-items: center;
+        flex-direction: column;
+        margin: 0;
+        min-height: 100%;
+        width: 100%;
+        border-radius: 0;
+        background-color: #e1eee6;
+        color: #00796b;
     }
     .message {
         width: 150px;

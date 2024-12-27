@@ -3,7 +3,7 @@
         <div class="nav">
             <span class="title">{{ name }}</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div style="margin-bottom: 20px; color: #00796b; font-weight: bold; font-size: 16px">How was your experience?</div>
             <div style="margin-bottom: 20px; font-size: 24px">Leave a rating</div>
             <a-rate v-model:value="rate">
@@ -26,7 +26,9 @@
     import { message } from 'ant-design-vue';
     import axios from 'axios';
     import router from '@/routers/index';
-
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     let id = ref(route.query.id);
     let name = ref(route.query.name);
     let rate = ref(0);
@@ -60,9 +62,9 @@
 </script>
 <style lang="scss" scoped>
     .content {
+        margin: 10px auto 0;
         min-height: 100%;
         border-radius: 0;
-        margin: 10px auto 0;
         border-radius: 12px;
     }
     .clinic {

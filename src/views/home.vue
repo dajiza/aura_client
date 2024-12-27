@@ -4,7 +4,7 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div class="topic">Daily Dose of TCM</div>
             <div class="item" v-for="blog in list">
                 <div class="img" v-if="blog.type === 'image' && blog.image.length > 0"><img :src="blog.image[0] || ''" alt="TCM" /></div>
@@ -25,6 +25,9 @@
     import { onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
 
     let list = ref([]);
 

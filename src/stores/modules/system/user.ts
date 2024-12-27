@@ -25,6 +25,7 @@ export const useUserStore = defineStore({
         h_name: '',
         timezone: '',
         is_subscription: false,
+        isMobile: false,
 
         token: '',
         //员工id
@@ -148,6 +149,7 @@ export const useUserStore = defineStore({
             this.timezone = data.timezone;
             this.loginName = data.email;
             this.actualName = `${data.first_name} ${data.last_name}`;
+            this.isMobile = data.isMobile;
 
             // 用户基本信息
             this.token = data.token;

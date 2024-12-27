@@ -4,7 +4,7 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div style="margin-bottom: 30px">Past visits</div>
             <div class="item" v-for="item in notes" :key="item.id" @click="() => router.push({ path: '/note', query: { id: item.id } })">
                 <img class="logo" :src="item.hospital.logo" alt="" />
@@ -28,9 +28,11 @@
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { supabase, authClient } from '@/utils/supabase';
-    import { useUserStore } from '@/stores/modules/system/user';
     import moment from 'moment-timezone';
+    import { useUserStore } from '@/stores/modules/system/user';
 
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     const uid = ref(useUserStore().getUid);
     const email = ref(useUserStore().getEmail);
     let clinic = ref([]);

@@ -4,7 +4,7 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
             <div class="clinic">
                 <div :class="['item', disciplineActive.includes(item) ? 'active' : '']" v-for="item in discipline" @click="onTag(item)">
@@ -52,6 +52,9 @@
     import router from '@/routers/index';
     import logo from '@/assets/img/logo3.jpeg';
     import gallery from '@/assets/img/gallery.png';
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
 
     let clinic = ref([]);
     let discipline = ref([]);

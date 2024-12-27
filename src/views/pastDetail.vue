@@ -4,7 +4,7 @@
             <ArrowLeftOutlined id="menu" @click="() => router.go(-1)" />
             <span class="title">{{ hospital.name }}</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div style="margin-bottom: 30px; color: #00796b; font-weight: bold; font-size: 16px">Visit detail</div>
             <div class="row">
                 <ClockCircleOutlined />
@@ -46,12 +46,13 @@
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { supabase, authClient } from '@/utils/supabase';
-    import { useUserStore } from '@/stores/modules/system/user';
     import moment from 'moment-timezone';
     import { useRoute } from 'vue-router';
     import RateModal from './rate.vue';
     import { message } from 'ant-design-vue';
-
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     const route = useRoute();
 
     const uid = ref(useUserStore().getUid);

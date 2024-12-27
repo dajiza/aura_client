@@ -11,7 +11,7 @@
             <ArrowLeftOutlined style="margin-right: 10px" />
             Back to home
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <div class="topic">{{ blog.title }}</div>
             <div class="subtitle">{{ blog.subtitle }}</div>
             <swiper class="img" :modules="modules" :pagination="{ clickable: true }" v-if="blog.type == 'image'">
@@ -42,6 +42,9 @@
     import 'swiper/css';
     import 'swiper/css/pagination';
     let modules = [Pagination];
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
 
     const route = useRoute();
     let id = ref(route.query.id);

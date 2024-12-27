@@ -15,6 +15,8 @@ import router from '@/routers/index';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as antIcons from '@ant-design/icons-vue';
+const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+let isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
 /**
  * 获取用户信息和用户权限对应的路由，构建动态路由
  */
@@ -47,6 +49,7 @@ async function getLoginInfo() {
             last_name: user.lastName,
             role: userSupabase.role,
             marketing: userSupabase.marketing ? 1 : 0,
+            isMobile,
         };
 
         localSave('role', userData.role);

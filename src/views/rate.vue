@@ -15,7 +15,7 @@
         getContainer="#app"
     >
         <div class="container">
-            <div class="content">
+            <div :class="['content', { mobile: isMobile }]">
                 <div style="margin-bottom: 20px; color: #00796b; font-weight: bold; font-size: 16px">How was your experience?</div>
                 <div style="margin-bottom: 20px; font-size: 24px">Leave a rating</div>
                 <a-rate v-model:value="rate">
@@ -44,7 +44,8 @@
     import { useRoute } from 'vue-router';
     const route = useRoute();
     import { message } from 'ant-design-vue';
-
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     const uid = ref(useUserStore().getUid);
     const email = ref(useUserStore().getEmail);
     const userInfo = ref(useUserStore().getUserInfo);

@@ -4,7 +4,7 @@
             <ArrowLeftOutlined id="menu" @click="() => router.go(-1)" />
             <span class="title">{{ detail.name }}</span>
         </div>
-        <div class="content">
+        <div :class="['content', { mobile: isMobile }]">
             <swiper class="swiper" :modules="modules" :pagination="{ clickable: true }">
                 <swiper-slide v-for="(item, index) in detail.gallery || [gallery]" :key="index">
                     <img :src="item" alt="" style="width: 100%" />
@@ -96,7 +96,6 @@
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
-    import { useUserStore } from '@/stores/modules/system/user';
     import { supabase, authClient } from '@/utils/supabase';
     import { useRoute } from 'vue-router';
     import router from '@/routers/index';
@@ -109,7 +108,9 @@
     import moment from 'moment-timezone';
     import staffAvatar from '@/assets/img/staff.png';
     import gallery from '@/assets/img/gallery.png';
-
+    import { useUserStore } from '@/stores/modules/system/user';
+    const userStore = useUserStore();
+    let { isMobile } = userStore;
     let modules = [Pagination];
 
     const uid = ref(useUserStore().getUid);

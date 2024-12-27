@@ -52,8 +52,10 @@ body {
         width: 90%;
         border-radius: 12px;
         background-color: #fff;
-        &::-webkit-scrollbar {
-            display: none;
+        &.mobile {
+            &::-webkit-scrollbar {
+                display: none;
+            }
         }
     }
 }
