@@ -67,6 +67,7 @@
             height: 160px;
             img {
                 width: 100%;
+                height: 100%;
             }
         }
         .blog-title {

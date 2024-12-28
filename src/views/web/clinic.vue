@@ -141,7 +141,8 @@
     const book = () => {
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
         // window.open(detail.value.book);
-        window.location.href = detail.value.booking;
+        // window.location.href = detail.value.booking;
+        window.open('//' + detail.value.booking, '_blank');
     };
     const copy = async () => {
         try {
@@ -242,6 +243,7 @@
             align-items: center;
             justify-content: center;
             margin-right: 10px;
+            margin-bottom: 10px;
             padding: 0 10px;
             height: 32px;
             border-radius: 8px;

@@ -25,6 +25,12 @@
                     <div>({{ detail.rate_amount }})</div>
                     <div class="view" @click="() => router.push({ path: '/rate-list', query: { hid } })">view all</div>
                 </div>
+                <div class="summary" style="display: flex; flex-wrap: wrap">
+                    <div class="tag" v-for="item in detail.discipline" :key="item">
+                        <CheckOutlined style="margin-right: 10px" />
+                        {{ item }}
+                    </div>
+                </div>
                 <div class="summary">
                     <div class="summary-title"><InfoCircleOutlined class="icon" />About us</div>
                     <div class="detail">{{ detail.about }}</div>
@@ -127,7 +133,8 @@
     const book = () => {
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
         // window.open(detail.value.book);
-        window.location.href = detail.value.booking;
+        // window.location.href = detail.value.booking;
+        window.open('//' + detail.value.booking, '_blank');
     };
     const copy = async () => {
         try {
@@ -214,6 +221,19 @@
     }
     .box {
         padding: 20px;
+        .tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 0 10px;
+            height: 32px;
+            border-radius: 8px;
+            background-color: #e1eee6;
+            color: #00796b;
+            font-size: 12px;
+        }
         .icons {
             font-size: 20px;
         }
