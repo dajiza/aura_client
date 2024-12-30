@@ -82,6 +82,10 @@
                                 {{ item.first_name.slice(0, 1) }}
                             </div>
                             <div style="margin-left: 10px">
+                                <div class="verified">
+                                    <CheckCircleFilled style="margin-right: 6px" />
+                                    verified patient
+                                </div>
                                 <div>{{ item.first_name.slice(0, 3) }}***</div>
                                 <div style="color: #b3b3b3; margin-top: 4px">
                                     {{ moment(item?.created_at).tz(detail?.timezone).format('MMM D, YYYY') }}
@@ -221,6 +225,15 @@
     }
     .box {
         padding: 20px;
+        .verified {
+            display: flex;
+            align-items: center;
+            color: #00796b;
+            border-radius: 4px;
+            background-color: #e1eee6;
+            padding: 3px 8px;
+            margin-bottom: 4px;
+        }
         .tag {
             display: flex;
             align-items: center;
