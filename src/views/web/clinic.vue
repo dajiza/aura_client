@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 20px">
-                    <div class="summary">
+                    <div class="summary" style="max-width: 40%">
                         <div class="summary-title"><InfoCircleOutlined class="icon" />About us</div>
                         <div class="detail">{{ detail.about }}</div>
                     </div>
