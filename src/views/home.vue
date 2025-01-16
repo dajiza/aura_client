@@ -4,6 +4,10 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
+        <div class="bulb-box">
+            <Bulb></Bulb>
+        </div>
+
         <div :class="['content', { mobile: isMobile }]">
             <div class="topic">Daily Dose of TCM</div>
             <div class="item" v-for="blog in list">
@@ -20,12 +24,15 @@
 </template>
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
+    import Bulb from '@/components/Bulb.vue';
+
     const loginDrawer = ref();
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { useUserStore } from '@/stores/modules/system/user';
+
     const userStore = useUserStore();
     let { isMobile } = userStore;
 
@@ -58,6 +65,9 @@
         color: #00796b;
         font-weight: bold;
         font-size: 26px;
+    }
+    .bulb-box {
+        padding: 20px;
     }
     .item {
         margin-bottom: 40px;

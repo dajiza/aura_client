@@ -1,5 +1,8 @@
 <template>
     <WebNav></WebNav>
+    <div class="bulb-box">
+        <Bulb></Bulb>
+    </div>
     <div class="container">
         <div class="content">
             <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
@@ -42,6 +45,7 @@
 </template>
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
+    import Bulb from '@/components/BulbWeb.vue';
     const loginDrawer = ref();
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
@@ -121,6 +125,9 @@
         display: flex;
         flex-wrap: wrap;
         margin-top: 20px;
+    }
+    .bulb-box {
+        margin: 0 auto;
     }
     .item {
         display: flex;

@@ -1,5 +1,8 @@
 <template>
     <WebNav></WebNav>
+    <div class="bulb-box">
+        <Bulb></Bulb>
+    </div>
     <div class="container">
         <div class="content">
             <div class="topic">Daily Dose of TCM</div>
@@ -19,6 +22,7 @@
 </template>
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
+    import Bulb from '@/components/BulbWeb.vue';
     const loginDrawer = ref();
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
@@ -55,6 +59,9 @@
         color: #00796b;
         font-weight: bold;
         font-size: 26px;
+    }
+    .bulb-box {
+        margin: 0 auto;
     }
     .item {
         display: flex;

@@ -4,6 +4,9 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
+        <div class="bulb-box">
+            <Bulb></Bulb>
+        </div>
         <div :class="['content', { mobile: isMobile }]">
             <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
             <div class="clinic">
@@ -45,6 +48,7 @@
 </template>
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
+    import Bulb from '@/components/Bulb.vue';
     const loginDrawer = ref();
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
@@ -126,6 +130,9 @@
         display: flex;
         flex-wrap: wrap;
         margin-top: 20px;
+    }
+    .bulb-box {
+        padding: 20px;
     }
     .item {
         display: flex;

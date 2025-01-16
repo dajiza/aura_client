@@ -66,3 +66,32 @@ body {
 .ant-rate {
     color: #00796b;
 }
+
+.bulb-box {
+    width: 100%;
+}
+@media (min-width: 640px) {
+    .bulb-box {
+        max-width: 640px;
+    }
+}
+@media (min-width: 768px) {
+    .bulb-box {
+        max-width: 768px;
+    }
+}
+@media (min-width: 1024px) {
+    .bulb-box {
+        max-width: 1024px;
+    }
+}
+@media (min-width: 1280px) {
+    .bulb-box {
+        max-width: 1280px;
+    }
+}
+@media (min-width: 1536px) {
+    .bulb-box {
+        max-width: 1536px;
+    }
+}
