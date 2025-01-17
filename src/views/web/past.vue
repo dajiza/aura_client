@@ -22,6 +22,7 @@
     </div>
 </template>
 <script setup>
+    import _ from 'lodash';
     import LoginDrawer from '@/components/LoginDrawer.vue';
     const loginDrawer = ref();
     import { onMounted, ref } from 'vue';
@@ -66,8 +67,9 @@
         SmartLoading.show();
         let { data: patientsData } = await supabase.from('patients').select('*').eq('email', email.value);
         if (patientsData.length > 0) {
-            let { data: notesData } = await supabase.from('notes').select('*').eq('pid', patientsData[0].pid).order('date', { ascending: false });
-            let hids = notesData.map((item) => item.hid);
+            let pids = patientsData.map((e) => e.pid);
+            let { data: notesData } = await supabase.from('notes').select('*').in('pid', pids).order('date', { ascending: false });
+            let hids = _.uniq(notesData.map((item) => item.hid));
             let { data: hospitalsData } = await supabase.from('hospitals').select('*').in('hid', hids);
             let hospitalsDict = {};
             hospitalsData.forEach((item) => {
