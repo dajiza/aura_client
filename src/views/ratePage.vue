@@ -41,7 +41,7 @@
         }
         SmartLoading.show();
         await axios({
-            url: `${import.meta.env.VITE_APP_API_URL}/api/rate-create`,
+            url: `${import.meta.env.VITE_APP_API_URL}/api/create-rate`,
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',

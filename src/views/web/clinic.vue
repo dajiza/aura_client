@@ -24,7 +24,7 @@
                 </div>
 
                 <div style="display: flex; justify-content: space-between; margin-top: 30px">
-                    <div style="width: 330px">
+                    <div style="width: 40%; flex-shrink: 0">
                         <div class="name">{{ detail.name }}</div>
                         <div class="info">{{ detail.address }}</div>
                         <div class="info">{{ detail.phone }}</div>

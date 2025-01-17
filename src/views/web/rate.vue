@@ -44,6 +44,7 @@
     import { useRoute } from 'vue-router';
     const route = useRoute();
     import { message } from 'ant-design-vue';
+    import axios from 'axios';
 
     const uid = ref(useUserStore().getUid);
     const email = ref(useUserStore().getEmail);
@@ -95,33 +96,32 @@
             return;
         }
         SmartLoading.show();
-        let { data: noteData } = await supabase.from('notes').select('*').eq('id', id.value);
-        let { data: hospitalsData } = await supabase.from('hospitals').select('*').eq('hid', noteData[0].hid);
-        if (noteData[0].is_rate) {
-            SmartLoading.hide();
-            message.warning('You have already rated.');
-            return;
-        }
-        let { data: patientsData } = await supabase.from('patients').select('*').eq('pid', noteData[0].pid);
-        await supabase.from('rates').insert({
-            hid: noteData[0].hid,
-            notes_id: noteData[0].id,
-            pid: noteData[0].pid,
-            rate: rate.value,
-            feedback: feedback.value,
-            avatar: userInfo.value.avatar,
-            first_name: patientsData[0].first_name,
-            last_name: patientsData[0].last_name,
-            phone: patientsData[0].phone,
-            email: patientsData[0].email,
-        });
-        await supabase.from('notes').update({ is_rate: true }).eq('id', id.value);
-        await supabase
-            .from('hospitals')
-            .update({ rate_amount: hospitalsData[0].rate_amount + 1, rate: hospitalsData[0].rate + rate.value })
-            .eq('hid', noteData[0].hid);
+        // let { data: noteData } = await supabase.from('notes').select('*').eq('id', id.value);
+        // let { data: hospitalsData } = await supabase.from('hospitals').select('*').eq('hid', noteData[0].hid);
+        // if (noteData[0].is_rate) {
+        //     SmartLoading.hide();
+        //     message.warning('You have already rated.');
+        //     return;
+        // }
+
+        await axios({
+            url: `${import.meta.env.VITE_APP_API_URL}/api/create-rate`,
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            params: { id: id.value, rate: rate.value, feedback: feedback.value },
+        })
+            .then((response) => {
+                SmartLoading.hide();
+                message.success('Thank you for your feedback.');
+            })
+            .catch((error) => {
+                SmartLoading.hide();
+                message.error(error.response.data.message);
+            });
+
         SmartLoading.hide();
-        message.success('Thank you for your feedback.');
         emit('change');
         close();
     };
