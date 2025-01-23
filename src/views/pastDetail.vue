@@ -73,7 +73,7 @@
         let { data: noteData } = await supabase.from('notes').select('*').eq('id', id.value);
         let { data: hospitalsData } = await supabase.from('hospitals').select('*').eq('hid', noteData[0].hid);
         if (hospitalsData.length == 0) {
-            message.error('Hospital not found');
+            message.error('Clinic not found');
             SmartLoading.hide();
             return;
         }
