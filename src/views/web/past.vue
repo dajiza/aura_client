@@ -4,7 +4,7 @@
         <div class="content">
             <div style="margin-bottom: 30px; font-size: 26px">Past visits</div>
             <div class="item" v-for="item in notes" :key="item.id" @click="() => router.push({ path: '/web/note', query: { id: item.id } })">
-                <img class="logo" :src="item.hospital.logo" alt="" />
+                <img class="logo" :src="item.hospital?.logo" alt="" />
                 <div style="margin-left: 10px">
                     <div style="margin-bottom: 4px; font-weight: bold">{{ item.hospital.name }}</div>
                     <div>{{ moment(item.created_at).format('MMM D, YYYY') }}</div>
@@ -35,39 +35,15 @@
 
     const uid = ref(useUserStore().getUid);
     const email = ref(useUserStore().getEmail);
-    let clinic = ref([]);
-    let discipline = ref([]);
-    let disciplineActive = ref([]);
     let notes = ref([]);
-    let sort = ref('reviews');
-
-    const openLogin = () => {
-        loginDrawer.value.openModal();
-    };
-    const clinicFilter = computed(() => {
-        if (disciplineActive.value.length === 0) {
-            return clinic.value;
-        }
-        return clinic.value.filter((item) => {
-            return item.discipline.some((disciplineItem) => {
-                return disciplineActive.value.includes(disciplineItem);
-            });
-        });
-    });
-
-    const onTag = (tag) => {
-        if (!disciplineActive.value.includes(tag)) {
-            disciplineActive.value.push(tag);
-        } else {
-            disciplineActive.value.splice(disciplineActive.value.indexOf(tag), 1);
-        }
-    };
 
     const getData = async () => {
         SmartLoading.show();
         let { data: patientsData } = await supabase.from('patients').select('*').eq('email', email.value);
+        console.log('🚀 ~ getData ~ patientsData:', patientsData);
         if (patientsData.length > 0) {
             let pids = patientsData.map((e) => e.pid);
+            console.log('🚀 ~ getData ~ pids:', pids);
             let { data: notesData } = await supabase.from('notes').select('*').in('pid', pids).order('date', { ascending: false });
             let hids = _.uniq(notesData.map((item) => item.hid));
             let { data: hospitalsData } = await supabase.from('hospitals').select('*').in('hid', hids);
