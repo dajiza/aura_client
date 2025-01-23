@@ -7,9 +7,9 @@
         <div :class="['content', { mobile: isMobile }]">
             <div style="margin-bottom: 30px">Past visits</div>
             <div class="item" v-for="item in notes" :key="item.id" @click="() => router.push({ path: '/note', query: { id: item.id } })">
-                <img class="logo" :src="item.hospital.logo" alt="" />
+                <img class="logo" :src="item.hospital?.logo" alt="" />
                 <div style="margin-left: 10px">
-                    <div style="margin-bottom: 4px; font-weight: bold">{{ item.hospital.name }}</div>
+                    <div style="margin-bottom: 4px; font-weight: bold">{{ item.hospital?.name }}</div>
                     <div>{{ moment(item.created_at).format('MMM D, YYYY') }}</div>
                 </div>
                 <div style="margin-left: auto">
