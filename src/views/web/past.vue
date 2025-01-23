@@ -6,7 +6,7 @@
             <div class="item" v-for="item in notes" :key="item.id" @click="() => router.push({ path: '/web/note', query: { id: item.id } })">
                 <img class="logo" :src="item.hospital?.logo" alt="" />
                 <div style="margin-left: 10px">
-                    <div style="margin-bottom: 4px; font-weight: bold">{{ item.hospital.name }}</div>
+                    <div style="margin-bottom: 4px; font-weight: bold">{{ item.hospital?.name }}</div>
                     <div>{{ moment(item.created_at).format('MMM D, YYYY') }}</div>
                 </div>
                 <div style="margin-left: auto">
@@ -40,10 +40,8 @@
     const getData = async () => {
         SmartLoading.show();
         let { data: patientsData } = await supabase.from('patients').select('*').eq('email', email.value);
-        console.log('🚀 ~ getData ~ patientsData:', patientsData);
         if (patientsData.length > 0) {
             let pids = patientsData.map((e) => e.pid);
-            console.log('🚀 ~ getData ~ pids:', pids);
             let { data: notesData } = await supabase.from('notes').select('*').in('pid', pids).order('date', { ascending: false });
             let hids = _.uniq(notesData.map((item) => item.hid));
             let { data: hospitalsData } = await supabase.from('hospitals').select('*').in('hid', hids);
