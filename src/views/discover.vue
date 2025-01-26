@@ -4,10 +4,8 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
-        <div class="bulb-box">
-            <Bulb></Bulb>
-        </div>
         <div :class="['content', { mobile: isMobile }]">
+            <Bulb></Bulb>
             <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
             <div class="clinic">
                 <div :class="['item', disciplineActive.includes(item) ? 'active' : '']" v-for="item in discipline" @click="onTag(item)">
@@ -131,9 +129,7 @@
         flex-wrap: wrap;
         margin-top: 20px;
     }
-    .bulb-box {
-        padding: 20px;
-    }
+
     .item {
         display: flex;
         align-items: center;

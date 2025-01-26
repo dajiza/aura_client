@@ -18,9 +18,9 @@
 <style lang="scss" scoped>
     .bulb {
         display: flex;
-        margin: 10px auto 0;
+        margin: 0px auto 20px;
         padding: 20px;
-        width: 90%;
+        // width: 90%;
         border-radius: 12px;
         background: linear-gradient(90deg, #e8fffc 0%, #e9ffd0 100%);
         .line {

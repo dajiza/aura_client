@@ -1,10 +1,8 @@
 <template>
     <WebNav></WebNav>
-    <div class="bulb-box">
-        <Bulb></Bulb>
-    </div>
     <div class="container">
         <div class="content">
+            <Bulb></Bulb>
             <div style="color: #00796b; font-size: 18px; font-weight: bold">Find clinic</div>
             <div class="clinic">
                 <div :class="['item', disciplineActive.includes(item) ? 'active' : '']" v-for="item in discipline" @click="onTag(item)">
@@ -125,9 +123,6 @@
         display: flex;
         flex-wrap: wrap;
         margin-top: 20px;
-    }
-    .bulb-box {
-        margin: 0 auto;
     }
     .item {
         display: flex;

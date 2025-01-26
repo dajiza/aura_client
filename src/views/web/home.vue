@@ -1,10 +1,9 @@
 <template>
     <WebNav></WebNav>
-    <div class="bulb-box">
-        <Bulb></Bulb>
-    </div>
+
     <div class="container">
         <div class="content">
+            <Bulb></Bulb>
             <div class="topic">Daily Dose of TCM</div>
             <div class="item" v-for="blog in list">
                 <div class="img" v-if="blog.type === 'image' && blog.image.length > 0"><img :src="blog.image[0] || ''" alt="TCM" /></div>
@@ -60,9 +59,7 @@
         font-weight: bold;
         font-size: 26px;
     }
-    .bulb-box {
-        margin: 0 auto;
-    }
+
     .item {
         display: flex;
         margin-bottom: 40px;

@@ -20,6 +20,7 @@
         background: linear-gradient(90deg, #e8fffc 0%, #e9ffd0 100%);
         border-radius: 12px;
         padding: 20px;
+        margin-bottom: 20px;
         .line {
             display: flex;
             align-items: center;

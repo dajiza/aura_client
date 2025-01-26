@@ -4,11 +4,9 @@
             <MenuOutlined id="menu" @click="openLogin" />
             <span class="title">Aura Cure</span>
         </div>
-        <div class="bulb-box">
-            <Bulb></Bulb>
-        </div>
 
         <div :class="['content', { mobile: isMobile }]">
+            <Bulb></Bulb>
             <div class="topic">Daily Dose of TCM</div>
             <div class="item" v-for="blog in list">
                 <div class="img" v-if="blog.type === 'image' && blog.image.length > 0"><img :src="blog.image[0] || ''" alt="TCM" /></div>
@@ -66,9 +64,7 @@
         font-weight: bold;
         font-size: 26px;
     }
-    .bulb-box {
-        padding: 20px;
-    }
+
     .item {
         margin-bottom: 40px;
         .img {
