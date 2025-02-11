@@ -3,13 +3,16 @@
 </template>
 <script setup>
     import { onMounted, ref } from 'vue';
-    import { authClient } from '@/utils/supabase';
-    console.log('🚀 ~ window.location.href:', window.location.href);
-    console.log('🚀 ~ import.meta.env.CLIENT_APP_URL:', import.meta.env.CLIENT_APP_URL);
+    import { authClient, authInfo } from '@/utils/supabase';
+    import router from '@/routers/index';
 
-    authClient.redirectToSignupPage({
-        postSignupRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
-    });
+    if (authInfo) {
+        router.push({ path: '/' });
+    } else {
+        authClient.redirectToSignupPage({
+            postSignupRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+        });
+    }
     onMounted(async () => {});
 </script>
 <style lang="scss" scoped>
