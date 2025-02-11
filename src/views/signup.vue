@@ -4,8 +4,11 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
+    console.log('🚀 ~ window.location.href:', window.location.href);
+    console.log('🚀 ~ import.meta.env.CLIENT_APP_URL:', import.meta.env.CLIENT_APP_URL);
+
     authClient.redirectToSignupPage({
-        postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+        postSignupRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
     });
     onMounted(async () => {});
 </script>
