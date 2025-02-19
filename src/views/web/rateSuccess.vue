@@ -3,7 +3,6 @@
         <div class="content">
             <div class="nav">
                 <span class="title">Aura Cure</span>
-                {{ import.meta.env.CLIENT_APP_URL }}
             </div>
             <img class="message" src="/src/assets/img/message.svg" alt="" />
             <div style="margin-top: 80px; font-size: 26px">Review Submitted</div>
@@ -17,7 +16,6 @@
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
     import router from '@/routers/index';
-    console.log("🚀 ~ singIn ~ import.meta.env.CLIENT_APP_URL:", import.meta.env.CLIENT_APP_URL)
 
     const singIn = async () => {
         let status = await authClient.getAuthenticationInfoOrNull();
