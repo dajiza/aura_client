@@ -3,6 +3,7 @@
         <div class="content">
             <div class="nav">
                 <span class="title">Aura Cure</span>
+                {{ import.meta.env.CLIENT_APP_URL }}
             </div>
             <img class="message" src="/src/assets/img/message.svg" alt="" />
             <div style="margin-top: 80px; font-size: 26px">Review Submitted</div>
