@@ -16,6 +16,7 @@
     import { onMounted, ref } from 'vue';
     import { authClient } from '@/utils/supabase';
     import router from '@/routers/index';
+    console.log("🚀 ~ singIn ~ import.meta.env.CLIENT_APP_URL:", import.meta.env.CLIENT_APP_URL)
 
     const singIn = async () => {
         let status = await authClient.getAuthenticationInfoOrNull();
