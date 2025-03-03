@@ -28,7 +28,7 @@
                                     verified patient
                                 </div>
                                 <div>{{ item.first_name.slice(0, 3) }}***</div>
-                                <div style="color: #b3b3b3; margin-top: 4px">{{ moment(detail?.create_at).format('MMM D, YYYY') }}</div>
+                                <div style="color: #b3b3b3; margin-top: 4px">{{ moment(detail?.created_at).format('MMM D, YYYY') }}</div>
                             </div>
                         </div>
                         <WarningFilled class="report" @click="report(item)" />
@@ -50,6 +50,7 @@
     import router from '@/routers/index';
     import moment from 'moment-timezone';
     import { message, Modal } from 'ant-design-vue';
+    import axios from 'axios';
 
     const uid = ref(useUserStore().getUid);
     const route = useRoute();
@@ -64,38 +65,53 @@
 
     const getData = async () => {
         SmartLoading.show();
-        let { data } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
-        let { data: ratesData, count } = await supabase.from('rates').select().eq('hid', data[0].hid);
 
-        detail.value = data[0];
-        rates.value = ratesData;
+        let response = await axios({
+            url: `${import.meta.env.VITE_APP_API_URL}/api/rate-list`,
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            data: { hid: hid.value },
+        });
+
+        detail.value = response.data.res.hospital;
+        rates.value = response.data.res.rates;
 
         SmartLoading.hide();
     };
     const report = async (item) => {
-        Modal.confirm({
-            title: 'Confirm to report review',
-            content: '',
-            cancelText: 'Cancel',
-            okText: 'Confirm',
-            async onOk() {
-                let { data } = await supabase.from('rates').select().eq('id', item.id);
-                await supabase
-                    .from('rates')
-                    .update({ report_amount: data[0].report_amount + 1 })
-                    .eq('id', item.id);
-                message.success('Report successfully');
-            },
-        });
-    };
-    onMounted(async () => {
         if (!uid.value) {
-            authClient.redirectToLoginPage({
-                postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+            Modal.confirm({
+                title: 'Need to login',
+                content: '',
+                cancelText: 'Cancel',
+                okText: 'Login',
+                async onOk() {
+                    authClient.redirectToLoginPage({
+                        postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+                    });
+                },
             });
         } else {
-            getData();
+            Modal.confirm({
+                title: 'Confirm to report review',
+                content: '',
+                cancelText: 'Cancel',
+                okText: 'Confirm',
+                async onOk() {
+                    let { data } = await supabase.from('rates').select().eq('id', item.id);
+                    await supabase
+                        .from('rates')
+                        .update({ report_amount: data[0].report_amount + 1 })
+                        .eq('id', item.id);
+                    message.success('Report successfully');
+                },
+            });
         }
+    };
+    onMounted(async () => {
+        getData();
     });
 </script>
 <style lang="scss" scoped>
