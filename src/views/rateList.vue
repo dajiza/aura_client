@@ -28,7 +28,7 @@
                                     verified patient
                                 </div>
                                 <div>{{ item.first_name.slice(0, 3) }}***</div>
-                                <div style="color: #b3b3b3; margin-top: 4px">{{ moment(detail?.created_at).format('MMM D, YYYY') }}</div>
+                                <div style="color: #b3b3b3; margin-top: 4px">{{ moment(item?.created_at).format('MMM D, YYYY') }}</div>
                             </div>
                         </div>
                         <WarningFilled class="report" @click="report(item)" />
