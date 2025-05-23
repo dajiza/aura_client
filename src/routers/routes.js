@@ -80,6 +80,14 @@ export default [
         },
         component: () => import('@/views/rateSuccess.vue'),
     },
+    {
+        path: '/intake-form',
+        name: 'intake-form',
+        meta: {
+            title: 'Intake Form',
+        },
+        component: () => import('@/views/intake.vue'),
+    },
 
     // web
     {
@@ -169,5 +177,13 @@ export default [
             title: 'Sign Up',
         },
         component: () => import('@/views/signup.vue'),
+    },
+    {
+        path: '/web/intake-form',
+        name: 'web-intake-form',
+        meta: {
+            title: 'Intake Form',
+        },
+        component: () => import('@/views/intake.vue'),
     },
 ];
