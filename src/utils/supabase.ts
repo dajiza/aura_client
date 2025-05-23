@@ -1,7 +1,6 @@
 import { getSupabaseClient } from '@/lib/supabase';
 
 import { createClient as createPropelAuthClient } from '@propelauth/javascript';
-console.log('🚀 ~ import.meta.env:', import?.meta?.env);
 
 export const authClient = createPropelAuthClient({
     // The base URL where your authentication pages are hosted. You can find this under the Frontend Integration section for your project.
