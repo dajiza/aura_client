@@ -130,7 +130,7 @@
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { useRoute } from 'vue-router';
-    import { supabase } from '@/utils/supabase';
+    import { supabase, authClient } from '@/utils/supabase';
     import SignaturePad from 'signature_pad';
     import { message } from 'ant-design-vue';
     import { useUserStore } from '@/stores/modules/system/user';
@@ -149,6 +149,7 @@
     const signaturePad = ref();
     const checked = ref(false);
     const formRef = ref();
+    const uid = ref(useUserStore().getUid);
 
     let formState = ref({
         first_name: '',
@@ -167,7 +168,7 @@
         medical_history: '',
         allergy: '',
         consent: '',
-        hid: useUserStore().getHid,
+        hid: '',
         pid: '',
     });
     const rules = {
@@ -188,13 +189,41 @@
         SmartLoading.show();
         let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
         let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patientData[0].hid);
+        let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value);
+
+        if (intakeData.length > 0) {
+            message.warning('You have already filled out your intake form.');
+            router.push({ path: '/intake-success', query: { pid: pid.value } });
+            return;
+        }
 
         fields.value = hospitalData[0].intake_fields || [];
         consent.value = hospitalData[0].intake_consent || '';
 
-        console.log('🚀 ~ getData ~ fields:', fields);
         patient.value = patientData[0];
         hospital.value = hospitalData[0];
+        console.log('🚀 ~ getData ~ formState.value.patient.value.birth:', patient.value.birth);
+
+        formState.value = {
+            first_name: patient.value.first_name,
+            last_name: patient.value.last_name,
+            middle_name: patient.value.middle_name,
+            birth: patient.value.birth ? moment(patient.value.birth, 'YYYYMMDD').format('MM/DD/YYYY') : '',
+            gender: patient.value.gender,
+            msp_no: patient.value.msp_no,
+            phone_prefix: patient.value.phone_prefix,
+            phone: patient.value.phone,
+            email: patient.value.email,
+            address: patient.value.address,
+            emergency_name: patient.value.emergency_name,
+            emergency_information: '',
+            primary_concern: '',
+            medical_history: patient.value.diagnosed,
+            allergy: patient.value.allergy,
+            consent: '',
+            hid: useUserStore().getHid,
+            pid: pid.value,
+        };
         SmartLoading.hide();
     };
     const clearSign = () => {
@@ -208,7 +237,7 @@
             cacheControl: '3600',
             upsert: false,
         });
-        return import.meta.env.SUPABASE_STORAGE_URL + data.fullPath;
+        return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + data.fullPath;
     };
 
     const base64ToFile = (base64Data, filename) => {
@@ -229,9 +258,6 @@
         return file;
     };
     const onSubmit = async () => {
-        console.log('🚀 ~ uploadSign ~ import.meta.env.SUPABASE_STORAGE_UR:', import.meta.env);
-        console.log('🚀 ~ uploadSign ~ import.meta.env.SUPABASE_STORAGE_UR:', import.meta.env.SUPABASE_STORAGE_URL);
-        return;
         SmartLoading.show();
         formRef.value
             .validate()
@@ -249,9 +275,21 @@
                 }
 
                 form.pid = pid.value;
-                await supabase.from('intake').upsert(form);
+                let { error } = await supabase.from('intake').insert(form);
+                if (error) {
+                    if (error.code == '23505') {
+                        message.error('You have already filled out your intake form.');
+                    } else if (error.code == '42501') {
+                        message.error('This is not your email');
+                    } else {
+                        message.error(error.message);
+                    }
+                    SmartLoading.hide();
+                    return;
+                }
                 message.success('Intake form saved!');
                 SmartLoading.hide();
+                router.push({ path: '/intake-success', query: { pid: pid.value } });
             })
             .catch((error) => {
                 console.log('🚀 ~ onSubmit ~ error:', error);
@@ -260,8 +298,22 @@
             });
     };
     onMounted(async () => {
-        await getData();
+        if (!uid.value) {
+            authClient.redirectToLoginPage({
+                postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+            });
+        } else {
+            await getData();
+        }
         let canvas = document.getElementById('signature-pad');
+
+        // 获取Canvas元素的实际宽度和高度
+        const canvasWidth = canvas.offsetWidth;
+        const canvasHeight = canvas.offsetHeight;
+        // 将Canvas的实际宽度和高度设置为获取到的值
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
         signaturePad.value = new SignaturePad(canvas, {
             backgroundColor: '#eee', // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
         });
@@ -298,9 +350,9 @@
         .width-full {
             width: 100%;
         }
-        // #signature-pad {
-        //     width: 100%;
-        //     height: 200px;
-        // }
+        #signature-pad {
+            width: 100%;
+            height: 200px;
+        }
     }
 </style>

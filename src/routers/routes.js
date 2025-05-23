@@ -88,6 +88,14 @@ export default [
         },
         component: () => import('@/views/intake.vue'),
     },
+    {
+        path: '/intake-success',
+        name: 'intake-success',
+        meta: {
+            title: 'Intake success',
+        },
+        component: () => import('@/views/intakeSuccess.vue'),
+    },
 
     // web
     {
@@ -185,5 +193,13 @@ export default [
             title: 'Intake Form',
         },
         component: () => import('@/views/intake.vue'),
+    },
+    {
+        path: '/web/intake-success',
+        name: 'web-intake-success',
+        meta: {
+            title: 'Intake success',
+        },
+        component: () => import('@/views/intakeSuccess.vue'),
     },
 ];

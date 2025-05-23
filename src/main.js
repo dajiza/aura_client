@@ -50,6 +50,7 @@ async function getLoginInfo() {
             role: userSupabase.role,
             marketing: userSupabase.marketing ? 1 : 0,
             isMobile,
+            hid: userSupabase.hid,
         };
 
         localSave('role', userData.role);
