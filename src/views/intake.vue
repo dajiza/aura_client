@@ -107,6 +107,16 @@
                         </div>
                     </a-form-item>
                 </template>
+                <p class="info">
+                    By submitting this form, you agree to share your personal and health information with Aura Cure. Your data is used only to prepare
+                    for your visit and provide care. It is stored securely and handled in compliance with PIPEDA, HIPAA, and GDPR. Your information
+                    may be processed using secure tools based in the U.S., with safeguards in place. You can request to access, correct, or delete
+                    your data at any time.
+                </p>
+                <p class="info">
+                    See our <a style="text-decoration: underline" href="https://www.aura-cure.com/privacy.html" target="_blank">Privacy Policy</a> or
+                    contact us at privacy@aura-cure.com.
+                </p>
                 <a-form-item class="btns" :wrapper-col="{ span: 24, offset: 0 }">
                     <a-button
                         style="width: 100%"
@@ -353,6 +363,10 @@
         #signature-pad {
             width: 100%;
             height: 200px;
+        }
+        .info {
+            padding: 0 15px;
+            color: #00796b;
         }
     }
 </style>
