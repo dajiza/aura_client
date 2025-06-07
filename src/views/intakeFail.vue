@@ -8,10 +8,11 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div style="color: #757575; font-size: 14px; margin-top: 40px">{{ patient.email }}</div>
-            <div style="color: #00796b; font-size: 26px; margin-top: 40px">Thank you for completing your intake form</div>
-            <img src="/src/assets/img/check.png" alt="" style="width: 48px; height: 48px; margin: 40px auto" />
-            <!-- <a-button type="primary" style="margin-top: 100px; width: 100px" @click="close">Close</a-button> -->
+            <div style="color: #00796b; font-size: 26px; margin-top: 40px; text-align: center">
+                <p>This intake form is linked to a different email.</p>
+                <p style="margin-top: 40px">Please sign in or create an account using the email that received the request.</p>
+                <a-button type="primary" style="margin-top: 100px" @click="retry">Sign out and Retry</a-button>
+            </div>
         </div>
     </div>
 </template>
@@ -24,25 +25,29 @@
     import router from '@/routers/index';
     import { useRoute } from 'vue-router';
     import { useUserStore } from '@/stores/modules/system/user';
-    import { supabase } from '@/utils/supabase';
+    import { supabase, authClient } from '@/utils/supabase';
+    import { clearAllCoolies } from '@/utils/cookie-util';
 
     const userStore = useUserStore();
     let { isMobile } = userStore;
     const route = useRoute();
-    let pid = ref(route.query.pid);
+    // let pid = ref(route.query.pid);
     let hospital = ref({});
     let patient = ref({});
     const hid = ref(useUserStore().getHid);
 
-    const close = () => {
-        var win = window.open('', '_self', '');
-        win.close();
+    const retry = () => {
+        authClient.logout();
+        clearAllCoolies();
+        useUserStore().logout();
+        authClient.redirectToLoginPage({
+            postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL,
+        });
     };
+
     const getData = async () => {
         SmartLoading.show();
-        let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
         let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
-        patient.value = patientData[0];
         hospital.value = hospitalData[0];
         SmartLoading.hide();
     };

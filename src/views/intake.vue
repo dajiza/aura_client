@@ -160,6 +160,8 @@
     const checked = ref(false);
     const formRef = ref();
     const uid = ref(useUserStore().getUid);
+    const hid = ref(useUserStore().getHid);
+    const userInfo = ref(useUserStore().getUserInfo);
 
     let formState = ref({
         first_name: '',
@@ -198,7 +200,13 @@
     const getData = async () => {
         SmartLoading.show();
         let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
-        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patientData[0].hid);
+
+        if (patientData.length == 0 || patientData[0].email != userInfo.value.email) {
+            router.push({ path: '/intake-fail' });
+            return;
+        }
+
+        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
         let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value);
 
         if (intakeData.length > 0) {
@@ -231,7 +239,7 @@
             medical_history: patient.value.diagnosed,
             allergy: patient.value.allergy,
             consent: '',
-            hid: useUserStore().getHid,
+            hid: hid.value,
             pid: pid.value,
         };
         SmartLoading.hide();

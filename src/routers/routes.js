@@ -96,6 +96,14 @@ export default [
         },
         component: () => import('@/views/intakeSuccess.vue'),
     },
+    {
+        path: '/intake-fail',
+        name: 'intake-fail',
+        meta: {
+            title: 'Intake fail',
+        },
+        component: () => import('@/views/intakeFail.vue'),
+    },
 
     // web
     {
@@ -201,5 +209,13 @@ export default [
             title: 'Intake success',
         },
         component: () => import('@/views/intakeSuccess.vue'),
+    },
+    {
+        path: '/web/intake-fail',
+        name: 'web-intake-fail',
+        meta: {
+            title: 'Intake fail',
+        },
+        component: () => import('@/views/intakeFail.vue'),
     },
 ];
