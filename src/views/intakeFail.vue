@@ -6,9 +6,10 @@
             <div class="info">{{ hospital.email }}</div>
             <div class="info">{{ hospital.phone }}</div>
         </div>
-
         <div :class="['content', { mobile: isMobile }]">
             <div style="color: #00796b; font-size: 26px; margin-top: 40px; text-align: center">
+                {{ env }}
+                {{ env.VITE_CLIENT_APP_URL }}
                 <p>This intake form is linked to a different email.</p>
                 <p style="margin-top: 40px">Please sign in or create an account using the email that received the request.</p>
                 <a-button type="primary" style="margin-top: 100px" @click="retry">Sign out and Retry</a-button>
@@ -36,6 +37,7 @@
     let hospital = ref({});
     let patient = ref({});
     // const hid = ref(useUserStore().getHid);
+    let env = ref(import.meta.env);
 
     const retry = () => {
         console.log('🚀 ~ retry ~ import.meta.env:', import.meta.env);
