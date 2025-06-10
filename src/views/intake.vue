@@ -213,7 +213,7 @@
             router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
             return;
         }
-        let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value);
+        let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value).eq('hid', patient.value.hid);
 
         if (intakeData.length > 0) {
             message.warning('You have already filled out your intake form.');
