@@ -32,9 +32,10 @@
     let { isMobile } = userStore;
     const route = useRoute();
     // let pid = ref(route.query.pid);
+    let hid = ref(route.query.hid);
     let hospital = ref({});
     let patient = ref({});
-    const hid = ref(useUserStore().getHid);
+    // const hid = ref(useUserStore().getHid);
 
     const retry = () => {
         authClient.logout();
@@ -47,8 +48,10 @@
 
     const getData = async () => {
         SmartLoading.show();
-        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
-        hospital.value = hospitalData[0];
+        if (hid.value) {
+            let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
+            hospital.value = hospitalData[0];
+        }
         SmartLoading.hide();
     };
     onMounted(async () => {

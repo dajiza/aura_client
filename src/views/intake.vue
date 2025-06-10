@@ -160,7 +160,7 @@
     const checked = ref(false);
     const formRef = ref();
     const uid = ref(useUserStore().getUid);
-    const hid = ref(useUserStore().getHid);
+    // const hid = ref(useUserStore().getHid);
     const userInfo = ref(useUserStore().getUserInfo);
 
     let formState = ref({
@@ -202,11 +202,17 @@
         let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
 
         if (patientData.length == 0 || patientData[0].email != userInfo.value.email) {
-            router.push({ path: '/intake-fail' });
+            router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
             return;
         }
+        patient.value = patientData[0];
 
-        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
+        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patient.value.hid);
+
+        if (hospitalData.length == 0) {
+            router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
+            return;
+        }
         let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value);
 
         if (intakeData.length > 0) {
@@ -217,10 +223,7 @@
 
         fields.value = hospitalData[0].intake_fields || [];
         consent.value = hospitalData[0].intake_consent || '';
-
-        patient.value = patientData[0];
         hospital.value = hospitalData[0];
-        console.log('🚀 ~ getData ~ formState.value.patient.value.birth:', patient.value.birth);
 
         formState.value = {
             first_name: patient.value.first_name,
@@ -239,7 +242,7 @@
             medical_history: patient.value.diagnosed,
             allergy: patient.value.allergy,
             consent: '',
-            hid: hid.value,
+            hid: patient.value.hid,
             pid: pid.value,
         };
         SmartLoading.hide();

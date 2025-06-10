@@ -32,7 +32,7 @@
     let pid = ref(route.query.pid);
     let hospital = ref({});
     let patient = ref({});
-    const hid = ref(useUserStore().getHid);
+    // const hid = ref(useUserStore().getHid);
 
     const close = () => {
         var win = window.open('', '_self', '');
@@ -41,9 +41,11 @@
     const getData = async () => {
         SmartLoading.show();
         let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
-        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', hid.value);
         patient.value = patientData[0];
-        hospital.value = hospitalData[0];
+        if (patient.value?.hid) {
+            let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patient.value.hid);
+            hospital.value = hospitalData[0];
+        }
         SmartLoading.hide();
     };
     onMounted(async () => {
