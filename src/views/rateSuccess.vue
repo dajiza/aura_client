@@ -25,7 +25,7 @@
             router.push({ path: '/' });
         } else {
             authClient.redirectToLoginPage({
-                postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL || window.location.href,
+                postLoginRedirectUrl: import.meta.env.VITE_CLIENT_APP_URL || window.location.href,
             });
         }
     };

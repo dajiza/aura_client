@@ -193,7 +193,7 @@
         if (!uid.value) {
             message.warning('Please login first');
             authClient.redirectToLoginPage({
-                postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+                postLoginRedirectUrl: window.location.href || import.meta.env.VITE_CLIENT_APP_URL,
             });
             return;
         }

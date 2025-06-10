@@ -58,7 +58,7 @@
     };
     const singIn = () => {
         authClient.redirectToLoginPage({
-            postLoginRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+            postLoginRedirectUrl: window.location.href || import.meta.env.VITE_CLIENT_APP_URL,
         });
     };
     onMounted(async () => {});

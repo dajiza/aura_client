@@ -10,7 +10,7 @@
         router.push({ path: '/' });
     } else {
         authClient.redirectToSignupPage({
-            postSignupRedirectUrl: window.location.href || import.meta.env.CLIENT_APP_URL,
+            postSignupRedirectUrl: window.location.href || import.meta.env.VITE_CLIENT_APP_URL,
         });
     }
     onMounted(async () => {});

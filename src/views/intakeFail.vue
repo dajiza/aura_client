@@ -38,13 +38,14 @@
     // const hid = ref(useUserStore().getHid);
 
     const retry = () => {
-        console.log('🚀 ~ retry ~ import.meta.env.CLIENT_APP_URL:', import.meta.env.CLIENT_APP_URL);
-
+        console.log('🚀 ~ retry ~ import.meta.env:', import.meta.env);
+        console.log('🚀 ~ retry ~ import.meta.env.VITE_CLIENT_APP_URL:', import.meta.env.VITE_CLIENT_APP_URL);
+        return;
         authClient.logout();
         clearAllCoolies();
         useUserStore().logout();
         authClient.redirectToLoginPage({
-            postLoginRedirectUrl: import.meta.env.CLIENT_APP_URL,
+            postLoginRedirectUrl: import.meta.env.VITE_CLIENT_APP_URL,
         });
     };
 
