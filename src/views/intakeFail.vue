@@ -38,6 +38,8 @@
     // const hid = ref(useUserStore().getHid);
 
     const retry = () => {
+        console.log('🚀 ~ retry ~ import.meta.env.CLIENT_APP_URL:', import.meta.env.CLIENT_APP_URL);
+
         authClient.logout();
         clearAllCoolies();
         useUserStore().logout();
