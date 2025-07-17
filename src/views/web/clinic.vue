@@ -143,10 +143,11 @@
     let rates = ref([]);
 
     const book = () => {
+        router.push({ path: '/schedule/index', query: { hid: hid.value } });
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
         // window.open(detail.value.book);
         // window.location.href = detail.value.booking;
-        window.open('//' + detail.value.booking, '_blank');
+        // window.open('//' + detail.value.booking, '_blank');
     };
     const copy = async () => {
         try {
@@ -245,11 +246,11 @@
         .verified {
             display: flex;
             align-items: center;
-            color: #00796b;
+            margin-bottom: 4px;
+            padding: 3px 8px;
             border-radius: 4px;
             background-color: #e1eee6;
-            padding: 3px 8px;
-            margin-bottom: 4px;
+            color: #00796b;
         }
         .tag {
             display: flex;

@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="top">
-            <div class="title">{{ hospital.name }}</div>
+            <div class="title">{{ hospital.name }} <CloseOutlined class="close-icon" @click="() => router.push('/')" /></div>
             <div class="info">{{ hospital.address }}</div>
             <div class="info">{{ hospital.email }}</div>
             <div class="info">{{ hospital.phone }}</div>
@@ -133,9 +133,6 @@
     </div>
 </template>
 <script setup>
-    import LoginDrawer from '@/components/LoginDrawer.vue';
-    const loginDrawer = ref();
-    import axios from 'axios';
     import { onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
@@ -148,20 +145,19 @@
     const userStore = useUserStore();
     import moment from 'moment-timezone';
     let { isMobile } = userStore;
+    import { useScheduleStore } from '@/stores/modules/schedule';
 
+    const scheduleStore = useScheduleStore();
     const route = useRoute();
-    let pid = ref(route.query.pid);
-    let hospital = ref({});
-    let patient = ref({});
+    const hid = ref(route.query.hid);
+    const pid = ref(route.query.pid);
+    const hospital = ref({});
+    const patient = ref({});
     const fields = ref([]);
     const consent = ref('');
-    const signActive = ref('Type');
     const signaturePad = ref();
     const checked = ref(false);
     const formRef = ref();
-    const uid = ref(useUserStore().getUid);
-    // const hid = ref(useUserStore().getHid);
-    const userInfo = ref(useUserStore().getUserInfo);
 
     let formState = ref({
         first_name: '',
@@ -194,36 +190,31 @@
         ],
     };
 
-    const openLogin = () => {
-        loginDrawer.value.openModal();
-    };
     const getData = async () => {
         SmartLoading.show();
-        let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
-
-        if (patientData.length == 0 || patientData[0].email != userInfo.value.email) {
-            router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
+        let { detail: patientData } = await scheduleStore.queryPatient({ pid: pid.value });
+        if (!patientData) {
+            // router.push({ path: '/schedule/intake-fail', query: { hid: hid.value } });
             return;
         }
-        patient.value = patientData[0];
+        patient.value = patientData;
 
-        let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patient.value.hid);
-
-        if (hospitalData.length == 0) {
-            router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
+        let { detail: hospitalData } = await scheduleStore.queryHospital({ hid: hid.value });
+        if (!hospitalData) {
+            router.push({ path: '/schedule/intake-fail', query: { hid: hid.value } });
             return;
         }
-        let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value).eq('hid', patient.value.hid);
 
-        if (intakeData.length > 0) {
+        let { detail: intakeData } = await scheduleStore.queryIntake({ pid: pid.value });
+        if (intakeData) {
             message.warning('You have already filled out your intake form.');
-            router.push({ path: '/intake-success', query: { pid: pid.value } });
+            // router.push({ path: '/schedule/intake-success', query: { hid: hid.value } });
             return;
         }
 
-        fields.value = hospitalData[0].intake_fields || [];
-        consent.value = hospitalData[0].intake_consent || '';
-        hospital.value = hospitalData[0];
+        fields.value = hospitalData.intake_fields || [];
+        consent.value = hospitalData.intake_consent || '';
+        hospital.value = hospitalData;
 
         formState.value = {
             first_name: patient.value.first_name,
@@ -251,14 +242,20 @@
         signaturePad.value.clear();
     };
     const uploadSign = async () => {
+        // const sign = signaturePad.value.toDataURL();
+        // let fileName = moment().valueOf().toString() + _.random(1000000, 9999999) + '.png';
+        // const file = base64ToFile(sign, fileName);
+        // const { data } = await supabase.storage.from('image').upload(fileName, file, {
+        //     cacheControl: '3600',
+        //     upsert: false,
+        // });
+        // return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + data.fullPath;
         const sign = signaturePad.value.toDataURL();
         let fileName = moment().valueOf().toString() + _.random(1000000, 9999999) + '.png';
-        const file = base64ToFile(sign, fileName);
-        const { data } = await supabase.storage.from('image').upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false,
-        });
-        return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + data.fullPath;
+        // const file = base64ToFile(sign, fileName);
+        // console.log('🚀 ~ uploadSign ~ file:', file);
+        const res = await scheduleStore.upload({ fileName, file: sign });
+        return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + res.data.fullPath;
     };
 
     const base64ToFile = (base64Data, filename) => {
@@ -294,9 +291,9 @@
                         form.name_sign = await uploadSign();
                     }
                 }
-
                 form.pid = pid.value;
-                let { error } = await supabase.from('intake').insert(form);
+                let { error } = await scheduleStore.createIntake(form);
+
                 if (error) {
                     if (error.code == '23505') {
                         message.error('You have already filled out your intake form.');
@@ -310,7 +307,7 @@
                 }
                 message.success('Intake form saved!');
                 SmartLoading.hide();
-                router.push({ path: '/intake-success', query: { pid: pid.value } });
+                router.push({ path: '/schedule/intake-success', query: { hid: hid.value } });
             })
             .catch((error) => {
                 console.log('🚀 ~ onSubmit ~ error:', error);
@@ -319,13 +316,7 @@
             });
     };
     onMounted(async () => {
-        if (!uid.value) {
-            authClient.redirectToLoginPage({
-                postLoginRedirectUrl: window.location.href || import.meta.env.VITE_CLIENT_APP_URL,
-            });
-        } else {
-            await getData();
-        }
+        await getData();
         let canvas = document.getElementById('signature-pad');
 
         // 获取Canvas元素的实际宽度和高度

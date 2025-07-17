@@ -105,7 +105,7 @@
         // }
 
         await axios({
-            url: `${import.meta.env.VITE_APP_API_URL}/api/create-rate`,
+            url: `${import.meta.env.VITE_APP_API_URL}/api/rate-create`,
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',

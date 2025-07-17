@@ -70,6 +70,12 @@ body {
 .bulb-box {
     width: 100%;
 }
+.close-icon {
+    position: absolute;
+    right: 30px;
+    font-size: 24px;
+    cursor: pointer;
+}
 @media (min-width: 640px) {
     .bulb-box {
         max-width: 640px;

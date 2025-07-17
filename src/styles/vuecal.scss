@@ -1,0 +1,33 @@
+.vuecal :deep {
+    margin: auto;
+    width: 100%;
+    height: 100%;
+
+    --vuecal-primary-color: #fff;
+    .vuecal__scrollable-wrap {
+        border: none;
+    }
+    .vuecal__views-bar {
+        display: none;
+    }
+
+    // .vuecal__cell--disabled {
+    //     background-color: red;
+    //     color: #ccc;
+    //     text-decoration: line-through;
+    // }
+
+    .vuecal__title-bar {
+        margin-bottom: 20px;
+        // height: 60px;
+        background-color: #fff;
+        color: #000;
+    }
+    .vuecal__cell--today {
+        border: 1px solid #00796b;
+    }
+    .vuecal__cell--selected {
+        background-color: #00796b;
+        color: #fff;
+    }
+}

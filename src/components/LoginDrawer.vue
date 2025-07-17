@@ -18,6 +18,12 @@
                 <div class="icon-box"><img src="/src/assets/img/past.svg" alt="" class="icon" /></div>
                 My past visits
             </div>
+
+            <div class="menu-item" v-if="uid" @click="upcoming">
+                <div class="icon-box"><img src="/src/assets/img/calender.svg" alt="" class="icon" /></div>
+                Upcoming visits
+            </div>
+
             <div class="menu-item" @click="discover">
                 <div class="icon-box"><img src="/src/assets/img/discover.svg" alt="" class="icon" /></div>
                 Discover
@@ -79,6 +85,10 @@
     };
     const past = () => {
         router.push({ path: '/past' });
+        closeModal();
+    };
+    const upcoming = () => {
+        router.push({ path: '/upcoming' });
         closeModal();
     };
     const account = () => {

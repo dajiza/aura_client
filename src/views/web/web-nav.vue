@@ -7,6 +7,9 @@
                 <div :class="['menu-item', { active: route.path === '/web/past' }]" @click="router.push({ path: '/web/past' })" v-if="uid">
                     Past visits
                 </div>
+                <div :class="['menu-item', { active: route.path === '/web/upcoming' }]" @click="router.push({ path: '/web/upcoming' })" v-if="uid">
+                    Upcoming visits
+                </div>
                 <div :class="['menu-item', { active: route.path === '/web/discover' }]" @click="router.push({ path: '/web/discover' })">Discover</div>
                 <div :class="['menu-item']" @click="account" v-if="uid">Account</div>
                 <div :class="['menu-item']" @click="singIn" v-if="!uid">Sign in</div>

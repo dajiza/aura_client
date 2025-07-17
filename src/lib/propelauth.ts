@@ -5,7 +5,7 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 export async function createUser(info: AuthenticationInfo): Promise<SupabaseClient<any, 'public', any>> {
     const propelAuthToken = info.accessToken;
 
-    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/create-user`, {
+    const response = await fetch(`${import.meta.env.VITE_APP_API_URL}/api/user-create`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${propelAuthToken}`,

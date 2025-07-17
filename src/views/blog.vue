@@ -56,7 +56,7 @@
     const getData = async () => {
         SmartLoading.show();
         let response = await axios({
-            url: `${import.meta.env.VITE_APP_API_URL}/api/blog-detail`,
+            url: `${import.meta.env.VITE_APP_API_URL}/api/blog-get`,
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
