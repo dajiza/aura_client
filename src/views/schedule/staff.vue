@@ -50,7 +50,7 @@
         return false;
     });
     const staffsFilter = computed(() => {
-        return clinic.value?.staffs ? clinic.value.staffs.filter((item) => item?.service_list?.includes(service.value)) : [];
+        return clinic.value?.staffsForBooking ? clinic.value.staffsForBooking.filter((item) => item?.service_list?.includes(service.value)) : [];
     });
 
     const onContinue = async () => {

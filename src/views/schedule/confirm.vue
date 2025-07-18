@@ -16,8 +16,12 @@
                 </div>
                 <div class="email">
                     <div style="font-weight: 500">Send me a reminder by</div>
-                    <a-checkbox v-model:checked="needEmailReminder" style="margin-top: 20px">Email</a-checkbox>
-                    <a-checkbox v-model:checked="isAgree" style="margin-top: 20px">I agree to the booking policy</a-checkbox>
+                    <div>
+                        <a-checkbox v-model:checked="needEmailReminder" style="margin-top: 20px">Email</a-checkbox>
+                    </div>
+                    <div>
+                        <a-checkbox v-model:checked="isAgree" style="margin-top: 20px">I agree to the booking policy</a-checkbox>
+                    </div>
                     <div class="policy-title" style="margin-top: 40px">Booking Policy</div>
                     <div class="policy-content">{{ serviceData.description_before }}123213213131</div>
                     <div class="policy-title">Practitioner’s Message</div>

@@ -8,7 +8,7 @@
         <div :class="['content', { mobile: isMobile }]">
             <div class="title">Choose a service</div>
             <div class="body">
-                <div class="box" v-for="item in clinic?.services" :key="item.id">
+                <div class="box" v-for="item in clinic?.servicesForBooking" :key="item.id">
                     <a-button style="width: 100%" type="primary" size="large" :ghost="!(active == item.id)" @click="() => (active = item.id)">
                         {{ item.name }}
                     </a-button>

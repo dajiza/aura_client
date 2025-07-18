@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import axios from 'axios';
-import { localRead, localSave } from '@/utils/local-util';
 import router from '@/routers/index';
 
 export const useScheduleStore = defineStore('schedule', {
@@ -38,7 +37,7 @@ export const useScheduleStore = defineStore('schedule', {
         // },
         async queryClinicDetail(hid: string) {
             let response = await axios({
-                url: `${import.meta.env.VITE_APP_API_URL}/api/clinic-detail`,
+                url: `${import.meta.env.VITE_APP_API_URL}/api/clinic-schedule-detail`,
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/json',
@@ -46,8 +45,8 @@ export const useScheduleStore = defineStore('schedule', {
                 data: { hid: hid },
             });
             let res = response.data.res;
-            res.services = res.services.filter((item) => item.booking_enable);
-            res.staffs = res.staffs.filter((item) => item.booking_enable);
+            res.servicesForBooking = res.services.filter((item) => item.booking_enable);
+            res.staffsForBooking = res.staffs.filter((item) => item.booking_enable);
             console.log('🚀 ~ queryClinicDetail ~ res:', res);
             this.clinic = res;
         },
