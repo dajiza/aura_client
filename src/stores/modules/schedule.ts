@@ -36,6 +36,8 @@ export const useScheduleStore = defineStore('schedule', {
         //     this.staff = value;
         // },
         async queryClinicDetail(hid: string) {
+            console.log('🚀 ~ queryClinicDetail ~ import.meta.env:', import.meta.env);
+            console.log('🚀 ~ queryClinicDetail ~ import.meta.env.VITE_APP_API_URL:', import.meta.env.VITE_APP_API_URL);
             let response = await axios({
                 url: `${import.meta.env.VITE_APP_API_URL}/api/clinic-schedule-detail`,
                 method: 'POST',
