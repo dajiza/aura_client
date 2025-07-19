@@ -133,6 +133,8 @@ export default defineConfig(({ command }) => {
                 '/api': {
                     target: url,
                     rewrite: (path) => path.replace(/^\/api/, ''),
+                    changeOrigin: true,
+                    secure: false,
                 },
             },
         },
