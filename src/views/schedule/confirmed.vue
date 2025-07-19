@@ -20,7 +20,9 @@
                     <a-button style="margin-top: 20px" type="primary" size="xs">${{ serviceData?.price?.toFixed(2) }}</a-button>
                 </div>
                 <div class="email">
-                    <div style="margin-top: 0px">The details of your appointment have been emailed to you.</div>
+                    <div class="policy-title" style="margin-top: 40px">Please Read</div>
+                    <div class="policy-content">{{ serviceData.description_after }}</div>
+                    <div style="margin-top: 40px">The details of your appointment have been emailed to you.</div>
                     <div style="margin-top: 40px">To cancel or edit your appointment, please follow the link in your email.</div>
                 </div>
             </div>
@@ -168,6 +170,7 @@
         }
         .policy-content {
             margin-top: 10px;
+            margin-bottom: 40px;
             font-size: 12px;
         }
     }

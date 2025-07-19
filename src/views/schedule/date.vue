@@ -17,6 +17,7 @@
                         :min-date="minDate"
                         :max-date="maxDate"
                         @cell-click="onDateSelect"
+                        :selected-date="selectedDate"
                     />
                 </div>
                 <div v-if="selectedDate" class="time-slots-container">
@@ -141,6 +142,28 @@
         return `${displayHour}:${minute.toString().padStart(2, '0')}${ampm}`;
     };
 
+    // 自动选中第一个可用的时间槽
+    const autoSelectFirstAvailableSlot = () => {
+        if (!selectedDate.value) return;
+
+        const slots = getAvailableSlotsForDate(selectedDate.value);
+        if (slots.length > 0) {
+            const firstSlot = slots[0];
+            active.value = `${selectedDate.value}-${firstSlot.start}`;
+            selectedSlot.value = firstSlot;
+        }
+    };
+
+    // 自动选中第一个有可用时间槽的日期
+    const autoSelectFirstAvailableDate = () => {
+        const availableDays = availableTimeSlots.value.filter((day) => day.slots.length > 0);
+        if (availableDays.length > 0) {
+            const firstAvailableDay = availableDays[0];
+            selectedDate.value = firstAvailableDay.date;
+            autoSelectFirstAvailableSlot();
+        }
+    };
+
     const onContinue = async () => {
         router.push({
             path: '/schedule/confirm',
@@ -210,7 +233,8 @@
             const slots = [];
             const startMoment = moment(`${dateStr} ${startTime}`, 'YYYY-MM-DD HH:mm');
             const endMoment = moment(`${dateStr} ${endTime}`, 'YYYY-MM-DD HH:mm');
-
+            const now = moment().tz(clinic.value?.detail?.timezone).valueOf();
+            const isToday = moment(dateStr).clone().tz(clinic.value?.detail?.timezone, true).isSame(now, 'day');
             let currentSlot = startMoment.clone();
 
             while (currentSlot.add(duration, 'minutes').isBefore(endMoment)) {
@@ -226,7 +250,8 @@
                     return scheduleDate === dateStr && slotStart.isBefore(scheduleEnd) && slotEnd.isAfter(scheduleStart);
                 });
 
-                if (!isConflict) {
+                const isPastTime = isToday && slotStart.clone().tz(clinic.value?.detail?.timezone, true).valueOf() < now;
+                if (!isConflict && !isPastTime) {
                     slots.push({
                         start: slotStart.format('HH:mm'),
                         end: slotEnd.format('HH:mm'),
@@ -247,7 +272,6 @@
 
         // 新增：将没有可预约时间的日期加入disableDays
         disableDays.value = timeSlots.filter((day) => day.slots.length === 0).map((day) => day.date);
-        console.log('🚀 ~ generationTimeList ~ timeSlots:', timeSlots);
         return timeSlots;
     };
 
@@ -257,6 +281,8 @@
         await generationTimeList();
         minDate.value = moment().tz(clinic.value?.detail?.timezone).format('YYYY-MM-DD');
         maxDate.value = moment().tz(clinic.value?.detail?.timezone).add(1, 'month').format('YYYY-MM-DD');
+
+        autoSelectFirstAvailableDate();
 
         SmartLoading.hide();
     });

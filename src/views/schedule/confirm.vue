@@ -23,7 +23,7 @@
                         <a-checkbox v-model:checked="isAgree" style="margin-top: 20px">I agree to the booking policy</a-checkbox>
                     </div>
                     <div class="policy-title" style="margin-top: 40px">Booking Policy</div>
-                    <div class="policy-content">{{ serviceData.description_before }}123213213131</div>
+                    <div class="policy-content">{{ serviceData.description_before }}</div>
                     <div class="policy-title">Practitioner’s Message</div>
                     <div class="policy-content">
                         {{ staffData.booking_introduction }}
