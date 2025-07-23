@@ -6,7 +6,7 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Have you visited our clinic before?</div>
+            <div class="title" style="font-weight: bold">Have you visited our clinic before?</div>
             <div class="body">
                 <div class="box">
                     <a-button style="width: 100%" type="primary" size="large" :ghost="!(active == 'yes')" @click="() => (active = 'yes')">

@@ -6,12 +6,13 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Confirm your appointment</div>
+            <div class="title" style="font-weight: bold">Confirm your appointment</div>
             <div class="body">
                 <div class="info">
                     <div class="time">{{ moment(date).format('MMM DD, YYYY') }} at {{ moment(start, 'HH:mm').format('h:mmA') }}</div>
                     <div style="font-size: 20px; margin-top: 20px">{{ serviceData.name }}</div>
-                    <div style="font-size: 20px">with {{ staffData.first_name }} {{ staffData.last_name }}</div>
+                    <div style="font-size: 20px; margin-top: 10px">with {{ staffData.first_name }} {{ staffData.last_name }}</div>
+                    <div style="font-size: 20px; margin-top: 10px">{{ serviceData.duration }} mins</div>
                     <a-button style="margin-top: 20px" type="primary" size="xs">${{ serviceData?.price?.toFixed(2) }}</a-button>
                 </div>
                 <div class="email">
@@ -131,11 +132,9 @@
         .policy-title {
             margin-top: 20px;
             color: #009688;
-            font-size: 12px;
         }
         .policy-content {
             margin-top: 10px;
-            font-size: 12px;
         }
     }
 </style>

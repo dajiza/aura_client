@@ -169,11 +169,9 @@
         .policy-title {
             margin-top: 20px;
             color: #009688;
-            font-size: 12px;
         }
         .policy-content {
             margin-top: 10px;
-            font-size: 12px;
         }
     }
 </style>

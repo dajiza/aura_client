@@ -6,7 +6,15 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Select date and time</div>
+            <div class="title" style="font-weight: bold">Select date and time</div>
+            <div>
+                <div style="color: #00796b; font-weight: 600; margin-top: 20px; text-align: center">
+                    {{ serviceCurrent.name }} ({{ serviceCurrent.duration }} mins)
+                </div>
+                <div style="color: #00796b; font-weight: 600; margin-top: 10px; text-align: center">
+                    with {{ staffCurrent.first_name }} {{ staffCurrent.last_name }}
+                </div>
+            </div>
             <div class="body">
                 <div class="date-picker-container">
                     <vue-cal
@@ -68,6 +76,8 @@
     const selectedDate = ref('');
     const selectedSlot = ref('');
     const disableDays = ref([]);
+    const serviceCurrent = ref({});
+    const staffCurrent = ref({});
 
     const minDate = ref();
     const maxDate = ref();
@@ -183,6 +193,8 @@
         let { schedule } = await scheduleStore.querySchedule({ hid: hid.value, staff: staff.value });
         let serviceData = clinic.value?.services.find((item) => item.id == service.value);
         let staffData = clinic.value?.staffs.find((item) => item.id == staff.value);
+        serviceCurrent.value = serviceData;
+        staffCurrent.value = staffData;
 
         let bookingTime, breakTimes, duration;
         bookingTime = staffData.booking_time || [];

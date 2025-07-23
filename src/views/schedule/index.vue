@@ -6,7 +6,7 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Booking Policy</div>
+            <div class="title" style="font-weight: bold">Booking Policy</div>
             <div class="body" style="white-space: pre-wrap" v-html="clinic?.detail?.booking_policy"></div>
             <a-button
                 style="width: 80%; max-width: 400px; margin-top: auto"

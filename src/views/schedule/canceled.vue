@@ -9,7 +9,7 @@
         <div :class="['content', { mobile: isMobile }]">
             <div class="body">
                 <div class="status">
-                    <div class="status-title">Your appointment was canceled</div>
+                    <div class="status-title" style="font-weight: bold">Your appointment was canceled</div>
                     <img src="/src/assets/img/check.png" alt="" style="width: 48px; height: 48px; margin: 50px auto" />
                 </div>
             </div>

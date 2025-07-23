@@ -6,11 +6,18 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Choose a service</div>
+            <div class="title" style="font-weight: bold">Choose a service</div>
             <div class="body">
                 <div class="box" v-for="item in clinic?.servicesForBooking" :key="item.id">
-                    <a-button style="width: 100%" type="primary" size="large" :ghost="!(active == item.id)" @click="() => (active = item.id)">
-                        {{ item.name }}
+                    <a-button
+                        class="btn"
+                        style="width: 100%; height: auto"
+                        type="primary"
+                        size="large"
+                        :ghost="!(active == item.id)"
+                        @click="() => (active = item.id)"
+                    >
+                        {{ item.name }} ({{ item.duration }} mins)
                     </a-button>
                 </div>
             </div>
@@ -81,6 +88,11 @@
         border-top: 1px solid #d9d9d9;
         .box {
             margin-bottom: 20px;
+        }
+    }
+    .btn {
+        ::v-deep span {
+            white-space: normal;
         }
     }
 </style>

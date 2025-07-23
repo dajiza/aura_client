@@ -6,7 +6,7 @@
         </div>
 
         <div :class="['content', { mobile: isMobile }]">
-            <div class="title">Choose a practitioner</div>
+            <div class="title" style="font-weight: bold">Choose a practitioner</div>
             <div class="body">
                 <div class="box" v-for="item in staffsFilter" :key="item.id">
                     <a-button style="width: 100%" type="primary" size="large" :ghost="!(active == item.id)" @click="() => (active = item.id)">

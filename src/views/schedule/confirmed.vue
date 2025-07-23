@@ -8,7 +8,7 @@
         <div :class="['content', { mobile: isMobile }]">
             <div class="body">
                 <div class="status">
-                    <div class="status-title">Confirmed</div>
+                    <div class="status-title" style="font-weight: bold">Confirmed</div>
                     <img src="/src/assets/img/check.png" alt="" style="width: 48px; height: 48px; margin: 30px auto" />
                 </div>
                 <div class="info">
@@ -16,14 +16,28 @@
                         {{ moment(detail.date).format('MMM DD, YYYY') }} at {{ moment(detail.start_time, 'HH:mm').format('h:mmA') }}
                     </div>
                     <div style="font-size: 20px; margin-top: 20px">{{ serviceData.name }}</div>
-                    <div style="font-size: 20px">with {{ staffData.first_name }} {{ staffData.last_name }}</div>
+                    <div style="font-size: 20px; margin-top: 10px">with {{ staffData.first_name }} {{ staffData.last_name }}</div>
+                    <div style="font-size: 20px; margin-top: 10px">{{ serviceData.duration }} mins</div>
                     <a-button style="margin-top: 20px" type="primary" size="xs">${{ serviceData?.price?.toFixed(2) }}</a-button>
                 </div>
                 <div class="email">
-                    <div class="policy-title" style="margin-top: 40px">Please Read</div>
+                    <div style="font-size: 16px; color: rgba(60, 60, 67, 0.6)">Patient info</div>
+                    <div style="margin-top: 15px">
+                        <UserOutlined style="margin-right: 6px" /> {{ detail.patient?.first_name }} {{ detail.patient?.last_name }}
+                    </div>
+                    <div style="margin-top: 15px"><MailOutlined style="margin-right: 6px" /> {{ detail.patient?.email }}</div>
+                    <div style="margin-top: 15px"><PhoneOutlined style="margin-right: 6px" /> {{ detail.patient?.phone }}</div>
+                    <div style="font-size: 16px; color: rgba(60, 60, 67, 0.6); margin-top: 30px">Clinic info</div>
+                    <div style="margin-top: 15px"><UserOutlined style="margin-right: 6px" /> {{ clinic?.detail?.name }}</div>
+                    <div style="margin-top: 15px"><EnvironmentOutlined style="margin-right: 6px" /> {{ clinic?.detail?.address }}</div>
+                    <div style="margin-top: 15px"><MailOutlined style="margin-right: 6px" /> {{ clinic?.detail?.email }}</div>
+                    <div style="margin-top: 15px"><PhoneOutlined style="margin-right: 6px" /> {{ clinic?.detail?.phone }}</div>
+                </div>
+                <div class="email">
+                    <div class="policy-title">Please Read</div>
                     <div class="policy-content">{{ serviceData.description_after }}</div>
-                    <div style="margin-top: 40px">The details of your appointment have been emailed to you.</div>
-                    <div style="margin-top: 40px">To cancel or edit your appointment, please follow the link in your email.</div>
+                    <div style="margin-top: 20px">The details of your appointment have been emailed to you.</div>
+                    <div style="margin-top: 20px">To cancel or edit your appointment, please follow the link in your email.</div>
                 </div>
             </div>
 
@@ -158,20 +172,23 @@
             border-bottom: 1px solid #d9d9d9;
             .time {
                 color: #009688;
+                font-size: 16px;
+                font-weight: bold;
             }
         }
         .email {
-            padding: 30px 20px;
+            padding: 30px 20px 0;
         }
         .policy-title {
             margin-top: 20px;
             color: #009688;
-            font-size: 12px;
         }
         .policy-content {
             margin-top: 10px;
-            margin-bottom: 40px;
-            font-size: 12px;
+            // margin-bottom: 40px;
+        }
+        .info-title {
+            color: rgba(60, 60, 67, 0.6);
         }
     }
 </style>
