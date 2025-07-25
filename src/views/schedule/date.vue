@@ -204,11 +204,12 @@
         // 确保schedule是数组
         const existingSchedules = Array.isArray(schedule) ? schedule : [];
 
-        // 生成今天到未来一个月内的每日可预约时间区块
+        // 生成每日可预约时间区块
         const generateAvailableTimeSlots = () => {
             const timeSlots = [];
             const today = moment().tz(clinic.value?.detail?.timezone);
-            const endDate = moment().tz(clinic.value?.detail?.timezone).add(1, 'month');
+            const endDate = moment().tz(clinic.value?.detail?.timezone).add(staffData.booking_window, 'month').add(1, 'day');
+            maxDate.value = moment().tz(clinic.value?.detail?.timezone).add(staffData.booking_window, 'month').format('YYYY-MM-DD');
 
             let currentDate = today.clone();
             while (currentDate.isBefore(endDate)) {
@@ -245,9 +246,12 @@
             const slots = [];
             const startMoment = moment(`${dateStr} ${startTime}`, 'YYYY-MM-DD HH:mm');
             const endMoment = moment(`${dateStr} ${endTime}`, 'YYYY-MM-DD HH:mm');
-            const now = moment().tz(clinic.value?.detail?.timezone).valueOf();
-            const isToday = moment(dateStr).clone().tz(clinic.value?.detail?.timezone, true).isSame(now, 'day');
+            // const now = moment().tz(clinic.value?.detail?.timezone).valueOf();
+            // const isToday = moment(dateStr).clone().tz(clinic.value?.detail?.timezone, true).isSame(now, 'day');
             let currentSlot = startMoment.clone();
+
+            let advanceHours = staffData.booking_advance_hours || 0;
+            const earliestBookingTime = moment().tz(clinic.value?.detail?.timezone).add(advanceHours, 'hours').valueOf();
 
             while (currentSlot.add(duration, 'minutes').isBefore(endMoment)) {
                 const slotStart = currentSlot.clone().subtract(duration, 'minutes');
@@ -262,7 +266,8 @@
                     return scheduleDate === dateStr && slotStart.isBefore(scheduleEnd) && slotEnd.isAfter(scheduleStart);
                 });
 
-                const isPastTime = isToday && slotStart.clone().tz(clinic.value?.detail?.timezone, true).valueOf() < now;
+                const isPastTime = slotStart.clone().tz(clinic.value?.detail?.timezone, true).valueOf() < earliestBookingTime;
+
                 if (!isConflict && !isPastTime) {
                     slots.push({
                         start: slotStart.format('HH:mm'),
@@ -292,7 +297,6 @@
         clinic.value = await scheduleStore.getClinic(hid.value);
         await generationTimeList();
         minDate.value = moment().tz(clinic.value?.detail?.timezone).format('YYYY-MM-DD');
-        maxDate.value = moment().tz(clinic.value?.detail?.timezone).add(1, 'month').format('YYYY-MM-DD');
 
         autoSelectFirstAvailableDate();
 
