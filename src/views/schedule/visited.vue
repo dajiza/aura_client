@@ -19,7 +19,7 @@
                     </a-button>
                 </div>
                 <a-form class="form" layout="vertical" style="margin-bottom: 40px" v-if="active == 'yes'">
-                    <a-form-item label="Enter your email/phone number*" :validate-status="validateStatus" :help="validateHelp">
+                    <a-form-item label="Enter your email*" :validate-status="validateStatus" :help="validateHelp">
                         <a-input v-model:value="email" placeholder="Enter here" />
                     </a-form-item>
                 </a-form>
