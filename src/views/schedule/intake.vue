@@ -37,6 +37,7 @@
                         <a-radio-group v-model:value="formState.gender">
                             <a-radio value="0">Male</a-radio>
                             <a-radio value="1">Female</a-radio>
+                            <a-radio value="2">Prefer not to say</a-radio>
                         </a-radio-group>
                     </a-form-item>
                     <a-form-item label="MSP No.">

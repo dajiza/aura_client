@@ -23,9 +23,10 @@
                 <a-form-item label="Date of birth">
                     {{ formState.birth ? moment(formState.birth, 'YYYYMMDD').format('MMM DD, YYYY') : '' }}
                 </a-form-item>
-                <a-form-item label="Sex">
+                <a-form-item label="Gender">
                     <span v-if="formState.gender === '0'">Male</span>
                     <span v-if="formState.gender === '1'">Female</span>
+                    <span v-if="formState.gender === '2'">Prefer not to say</span>
                 </a-form-item>
                 <a-form-item label="Phone" name="phone"> {{ formState.phone_prefix }} {{ formState.phone }} </a-form-item>
                 <a-form-item label="MSP No.">

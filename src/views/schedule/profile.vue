@@ -28,10 +28,11 @@
                     />
                     <div class="tips">MMDDYYYY</div>
                 </a-form-item>
-                <a-form-item label="sex" name="gender">
+                <a-form-item label="Gender" name="gender">
                     <a-select v-model:value="formState.gender">
                         <a-select-option value="0">Male</a-select-option>
                         <a-select-option value="1">Female</a-select-option>
+                        <a-select-option value="2">Prefer not to say</a-select-option>
                     </a-select>
                 </a-form-item>
                 <a-form-item label="Phone number" name="phone">
