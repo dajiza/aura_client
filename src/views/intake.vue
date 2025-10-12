@@ -33,7 +33,7 @@
                             placeholder="MM/DD/YYYY"
                         />
                     </a-form-item>
-                    <a-form-item label="Sex">
+                    <a-form-item label="Gender">
                         <a-radio-group v-model:value="formState.gender">
                             <a-radio value="0">Male</a-radio>
                             <a-radio value="1">Female</a-radio>
