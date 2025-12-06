@@ -135,10 +135,11 @@
     let rates = ref([]);
 
     const book = () => {
+        router.push({ path: '/schedule/index', query: { hid: hid.value } });
         // console.log('🚀 ~ book ~ detail.value.book:', detail.value.booking);
         // window.open(detail.value.book);
         // window.location.href = detail.value.booking;
-        window.open('//' + detail.value.booking, '_blank');
+        // window.open('//' + detail.value.booking, '_blank');
     };
     const copy = async () => {
         try {
