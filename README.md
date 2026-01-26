@@ -1,5 +1,10 @@
 # AURA PORTAL
 
+## 跑本地后端和前端
+
+`doppler run  -p aura-cure -c dev -- npm run dev`
+--
+
 <h1 align="center"><a href="https://github.com/huatten/vue3-start-template" target="_blank">Vite4 - Vue3 - Pinia </a></h1>
 
 <p align="center">
