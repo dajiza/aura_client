@@ -27,14 +27,44 @@
                             <div class="introduction">{{ item.introduction }}</div>
                             <div class="next">
                                 <div class="next-title">Next Available</div>
-                                <div class="next-time">Feb 12 2:00 PM</div>
+                                <div class="next-time">{{ item.earliest_available_time_format }}</div>
                             </div>
-                            <div class="book">Book Appointment</div>
+                            <div class="book" @click="() => router.push({ path: '/schedule/visited', query: { hid, staff: item.id } })">
+                                Book Appointment
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-subtitle" style="margin: 40px 0">Book by service</div>
+                <div class="service-list">
+                    <div class="service-item" v-for="item in clinic?.servicesForBooking" :key="item.id">
+                        <div class="service-title">
+                            <div class="service-name">{{ item.name }}</div>
+                            <div class="service-description">{{ item.description_before }}</div>
+                        </div>
+                        <div class="service-info">
+                            <div class="service-time">{{ item.duration }} min</div>
+                            <div class="service-price">${{ item.price }}</div>
+                        </div>
+                        <div class="service-book" @click="() => router.push({ path: '/schedule/visited', query: { hid, service: item.id } })">
+                            Book Now
                         </div>
                     </div>
                 </div>
             </div>
-            <a-button
+            <div class="clinic">
+                <div class="detail-title">Clinic Information</div>
+                <div class="clinic-info">
+                    <div class="info-title">Location</div>
+                    <div class="info-detail">{{ clinic?.detail?.address }}</div>
+                    <div class="info-title">Contact</div>
+                    <div class="info-title black">Phone</div>
+                    <div class="info-detail">{{ clinic?.detail?.phone }}</div>
+                    <div class="info-title black">Email</div>
+                    <div class="info-detail" style="margin-bottom: 0">{{ clinic?.detail?.email }}</div>
+                </div>
+            </div>
+            <!-- <a-button
                 style="width: 80%; max-width: 400px; margin-top: auto"
                 type="primary"
                 size="large"
@@ -42,7 +72,11 @@
                 v-if="clinic?.detail?.booking_enable"
             >
                 Continue to booking
-            </a-button>
+            </a-button> -->
+        </div>
+        <div class="footer">
+            <div class="name">{{ clinic?.detail?.name }}</div>
+            <div class="powered">Powered by Aura Cure</div>
         </div>
     </div>
 </template>
@@ -71,6 +105,11 @@
     });
 </script>
 <style lang="scss" scoped>
+    .mobile {
+        .service-book {
+            margin-top: 20px;
+        }
+    }
     .content {
         display: flex;
         align-items: center;
@@ -78,6 +117,9 @@
         width: 100%;
         margin-top: 0;
         border-radius: 0;
+        background-color: #f8f9fa;
+        overflow: visible;
+        padding: 40px;
     }
     .head {
         margin: 0 auto;
@@ -118,6 +160,8 @@
         color: #fff;
         flex-direction: column;
         gap: 20px;
+        padding: 0 20px;
+        text-align: center;
     }
     .policy {
         border-left: 4px solid #8bc34a;
@@ -218,6 +262,118 @@
                     cursor: pointer;
                 }
             }
+        }
+    }
+    .service-list {
+        box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.08);
+        // padding: 30px;
+        .service-item {
+            width: 100%;
+            display: flex;
+            border-bottom: 1px solid #e1eee6;
+            padding: 30px 40px;
+            flex-wrap: wrap;
+            &:last-child {
+                border-bottom: none;
+            }
+            .service-title {
+                flex: 1;
+                .service-name {
+                    color: #006d60;
+                    font-weight: 700;
+                    font-size: 20px;
+                    margin-bottom: 15px;
+                }
+                .service-description {
+                    color: #666;
+                    white-space: pre-wrap;
+                    line-height: 1.5;
+                }
+            }
+            .service-info {
+                text-align: center;
+                .service-time {
+                    color: #333;
+                    font-weight: 700;
+                    font-size: 16px;
+                    margin-bottom: 20px;
+                }
+                .service-price {
+                    color: #006d60;
+                    font-weight: 700;
+                    font-size: 22px;
+                }
+            }
+            .service-book {
+                width: 120px;
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                align-self: center;
+                border-radius: 8px;
+                background: #8bc34a;
+                color: #fff;
+                font-weight: 700;
+                font-size: 15px;
+                cursor: pointer;
+                margin-left: 60px;
+                flex-shrink: 0;
+            }
+        }
+    }
+    .clinic {
+        width: 100%;
+        background: linear-gradient(131.65deg, #e1eee6 0%, #ffffff 100%);
+        padding: 30px 40px;
+        margin-top: 40px;
+        border-radius: 12px;
+        .detail-title {
+            color: #006d60;
+            font-weight: 700;
+            font-size: 28px;
+            border-bottom: 3px solid rgba(225, 238, 230, 1);
+            padding-bottom: 20px;
+        }
+        .clinic-info {
+            margin-top: 20px;
+            border-radius: 10px;
+            padding: 30px 20px;
+            background: #fff;
+            .info-title {
+                color: #006d60;
+                font-weight: 700;
+                font-size: 16px;
+                margin-bottom: 20px;
+                &.black {
+                    color: #555;
+                }
+            }
+            .info-detail {
+                color: #666;
+                margin-bottom: 20px;
+            }
+        }
+    }
+    .footer {
+        background-color: #006d60;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        color: #fff;
+        text-align: center;
+        .name {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+            padding: 0 100px 30px;
+        }
+        .powered {
+            font-size: 14px;
         }
     }
 </style>

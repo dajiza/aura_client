@@ -7,13 +7,13 @@
         }"
     >
         <a-spin class="spin" :spinning="spinning" tip="LOADING..." size="large"> </a-spin>
-        <div :class="['wrap', { 'bg-mobile': isMobile }]">
+        <div :class="[route.name != 'schedule-index' && route.name != 'web-schedule-index' ? 'wrap' : '', { 'bg-mobile': isMobile }]">
             <router-view v-slot="{ Component }" class="main" :key="route.fullPath">
                 <transition name="fade" mode="out-in">
                     <component :is="Component" />
                 </transition>
             </router-view>
-            <div class="foot">Powered by Aura Cure Platform Inc.</div>
+            <div class="foot" v-if="route.name != 'schedule-index' && route.name != 'web-schedule-index'">Powered by Aura Cure Platform Inc.</div>
         </div>
     </a-config-provider>
 </template>

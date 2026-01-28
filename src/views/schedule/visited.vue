@@ -48,6 +48,8 @@
     let { isMobile } = userStore;
     const route = useRoute();
     const hid = ref(route.query.hid);
+    const service = ref(route.query.service);
+    const staff = ref(route.query.staff);
 
     const clinic = ref();
     const active = ref('');
@@ -72,13 +74,18 @@
         if (active.value == 'yes') {
             SmartLoading.show();
             let res = await scheduleStore.queryPatient({ hid: hid.value, email: email.value });
-            console.log('🚀 ~ onContinue ~ res:', res);
             if (!res.detail) {
                 validateStatus.value = 'error';
                 validateHelp.value = 'Can’t find your profile ';
             } else {
-                console.log('🚀 ~ onContinue ~ else:');
-                router.push({ path: '/schedule/service', query: { hid: hid.value, email: email.value } });
+                if (service.value) {
+                    router.push({
+                        path: '/schedule/staff',
+                        query: { hid: hid.value, email: email.value, service: service.value, staff: staff.value },
+                    });
+                } else {
+                    router.push({ path: '/schedule/service', query: { hid: hid.value, email: email.value, staff: staff.value } });
+                }
             }
             SmartLoading.hide();
             return;
