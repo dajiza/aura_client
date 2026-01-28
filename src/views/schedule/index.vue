@@ -20,7 +20,7 @@
                 <div class="detail-subtitle">Book by practitioner</div>
                 <div class="list">
                     <div class="item" v-for="item in clinic?.staffsForBooking" :key="item.id">
-                        <img class="avatar" :src="item.avatar" alt="avatar" />
+                        <img class="avatar" :src="item.avatar || defaultAvatar" alt="avatar" />
                         <div class="info">
                             <div class="name">{{ item.first_name }} {{ item.last_name }}</div>
                             <div class="title">{{ item.title }}</div>
@@ -95,7 +95,7 @@
     const route = useRoute();
     const hid = ref(route.query.hid);
     localSave('hid', hid.value);
-
+    const defaultAvatar = ref('/src/assets/img/avatar.png');
     const clinic = ref();
 
     onMounted(async () => {
