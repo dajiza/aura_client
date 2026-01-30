@@ -88,6 +88,7 @@
     import { useScheduleStore } from '@/stores/modules/schedule';
     import { useRoute } from 'vue-router';
     import { localSave } from '@/utils/local-util';
+    import defaultAvatar from '@/assets/img/avatar.png';
 
     const scheduleStore = useScheduleStore();
     const userStore = useUserStore();
@@ -95,7 +96,6 @@
     const route = useRoute();
     const hid = ref(route.query.hid);
     localSave('hid', hid.value);
-    const defaultAvatar = ref('/src/assets/img/avatar.png');
     const clinic = ref();
 
     onMounted(async () => {
