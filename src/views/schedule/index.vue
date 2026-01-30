@@ -106,8 +106,19 @@
 </script>
 <style lang="scss" scoped>
     .mobile {
-        .service-book {
-            margin-top: 20px;
+        .service-list {
+            .service-item {
+                display: block;
+                padding: 20px 20px;
+                .service-info {
+                    text-align: left;
+                    margin-top: 30px;
+                }
+                .service-book {
+                    margin-top: 30px;
+                    margin-left: 0;
+                }
+            }
         }
     }
     .content {
@@ -202,7 +213,7 @@
     }
     .list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 300px));
         margin-top: 20px;
         gap: 40px;
         justify-content: space-between;
