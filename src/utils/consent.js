@@ -4,7 +4,7 @@ const apiBase = () => import.meta.env.VITE_APP_API_URL;
 
 /**
  * Loads the clinic's active intake consent templates from the EMR API.
- * Templates are seeded by EMR settings; this endpoint only lists them.
+ * Seeds built-in presets server-side on first call for a clinic (same as EMR).
  */
 export async function fetchIntakeConsentTemplates(hid) {
     const response = await axios({
