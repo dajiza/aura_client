@@ -6,28 +6,36 @@ import routers from './routers';
 import stores from './stores';
 import directives from './directives';
 import '@/styles/index.scss';
-import { Button, message, Input, ConfigProvider, Form, Spin } from 'ant-design-vue';
-import { supabase, authInfo } from '@/utils/supabase';
-import { localRead, localSave } from '@/utils/local-util';
-import { getTokenFromCookie } from '@/utils/cookie-util';
+import { message } from 'ant-design-vue';
+import { authInfo, supabase, bootSupabase } from '@/utils/supabase';
+import { localSave } from '@/utils/local-util';
 import { useUserStore } from '@/stores/modules/system/user';
-import router from '@/routers/index';
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
 import * as antIcons from '@ant-design/icons-vue';
+
 const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 let isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+let vueMounted = false;
+
 /**
  * 获取用户信息和用户权限对应的路由，构建动态路由
  */
 async function getLoginInfo() {
+    if (!authInfo?.user || !supabase) return;
+
     try {
         let { user } = authInfo;
-        let { data: userSupabase } = await supabase.from('users').select().eq('id', authInfo.user.userId).single();
+        let { data: userSupabase } = await supabase.from('users').select('*').eq('id', user.userId).maybeSingle();
 
-        // 新用户创建数据
+        // Legacy rows may key off email instead of the current PropelAuth user id.
+        if (!userSupabase && user.email) {
+            const byEmail = await supabase.from('users').select('*').eq('email', user.email).maybeSingle();
+            userSupabase = byEmail.data;
+        }
+
         if (!userSupabase) {
-            let res = await supabase
+            const res = await supabase
                 .from('users')
                 .insert({
                     id: user.userId,
@@ -36,60 +44,64 @@ async function getLoginInfo() {
                     last_name: user.lastName,
                     role: 'patient',
                 })
-                .select();
-            userSupabase = res.data[0];
+                .select('*')
+                .maybeSingle();
+            userSupabase = res.data;
         }
-        // let { data: hospital } = await supabase.from('hospitals').select('*').eq('hid', userSupabase.hid).single();
 
+        // Fallback: PropelAuth id may not match a legacy users.id (unique email blocks insert).
         let userData = {
             uid: user.userId,
-            avatar: userSupabase.avatar,
+            avatar: userSupabase?.avatar,
             email: user.email,
             first_name: user.firstName,
             last_name: user.lastName,
-            role: userSupabase.role,
-            marketing: userSupabase.marketing ? 1 : 0,
+            role: userSupabase?.role || 'patient',
+            marketing: userSupabase?.marketing ? 1 : 0,
             isMobile,
-            hid: userSupabase.hid,
+            hid: userSupabase?.hid,
         };
 
         localSave('role', userData.role);
-        initVue();
         useUserStore().setUserLoginInfo(userData);
-        // router.push('/');
-
-        // if (!hospital) {
-        //     message.warning('Please create a clinic first');
-        // } else {
-        //     let hospitalData = {
-        //         hid: hospital.hid,
-        //         h_name: hospital.name,
-        //         is_subscription: hospital?.subscription_name ? true : false,
-        //     };
-        //     useUserStore().setHospitalInfo(hospitalData);
-        //     // router.push('/home');
-        // }
     } catch (e) {
-        message.error(e);
-        initVue();
+        console.error('getLoginInfo failed', e);
+        message.error(e?.message || 'Failed to load user profile');
     }
 }
+
 function initVue() {
+    if (vueMounted) return;
+    vueMounted = true;
     let vueApp = createApp(App);
     let app = vueApp.use(Antd).use(routers).use(stores).use(directives);
-    // 注册图标组件
     Object.keys(antIcons).forEach((key) => {
         app.component(key, antIcons[key]);
     });
-    //全局
     app.config.globalProperties.$antIcons = antIcons;
-
-    //挂载
     app.mount('#app');
 }
-let token = getTokenFromCookie();
-if (!token) {
+
+async function boot() {
+    // Auth first, then mount Pinia/app, then write uid. Intake must not see an
+    // empty uid or it will redirectToLoginPage in a loop.
+    await bootSupabase();
     initVue();
-} else {
-    getLoginInfo();
+    if (authInfo?.user) {
+        // Set uid immediately so intake onMounted does not bounce to login.
+        useUserStore().setUserLoginInfo({
+            uid: authInfo.user.userId,
+            email: authInfo.user.email,
+            first_name: authInfo.user.firstName,
+            last_name: authInfo.user.lastName,
+            role: 'patient',
+            isMobile,
+        });
+        await getLoginInfo();
+    }
 }
+
+boot().catch((error) => {
+    console.error('boot failed', error);
+    initVue();
+});

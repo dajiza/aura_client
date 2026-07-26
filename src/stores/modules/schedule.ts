@@ -188,6 +188,46 @@ export const useScheduleStore = defineStore('schedule', {
             });
             return response.data.res;
         },
+        async queryConsentTemplates({ hid }: { hid: string }) {
+            let response = await axios({
+                url: `${import.meta.env.VITE_APP_API_URL}/api/consent-templates`,
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                data: { hid, intakeOnly: true },
+            });
+            return response.data?.res?.templates || [];
+        },
+        async createConsents({
+            hid,
+            pid,
+            templateIds,
+            signature,
+            source = 'intake',
+        }: {
+            hid: string;
+            pid: string;
+            templateIds: string[];
+            signature: { name_type?: string; name_sign?: string };
+            source?: 'intake' | 'portal';
+        }) {
+            let response = await axios({
+                url: `${import.meta.env.VITE_APP_API_URL}/api/consent-create`,
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                data: { hid, pid, templateIds, signature, source },
+                validateStatus: () => true,
+            });
+            if (response.status >= 400) {
+                const err: any = new Error(response.data?.message || 'Failed to save consent forms');
+                err.response = response;
+                throw err;
+            }
+            return response.data?.res;
+        },
         async createPatient(form: any) {
             let response = await axios({
                 url: `${import.meta.env.VITE_APP_API_URL}/api/patient-create`,

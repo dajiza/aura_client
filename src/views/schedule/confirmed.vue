@@ -58,6 +58,7 @@
         id="intake-pdf"
         :fields="fields"
         :consent="consent"
+        :consents="intakeConsents"
         :formState="intakeForm"
         :patient="detail.patient"
         :hospital="clinic?.detail"
@@ -91,6 +92,7 @@
     const fields = ref([]);
     const consent = ref('');
     const intakeForm = ref({});
+    const intakeConsents = ref([]);
 
     const gotoIntake = async () => {
         router.push({ path: '/schedule/intake', query: { hid: detail.value.hid, pid: detail.value.patient.pid } });
@@ -129,8 +131,9 @@
         serviceData.value = clinic.value?.services.find((item) => item.id == detail.value.service.id);
         staffData.value = clinic.value?.staffs.find((item) => item.id == detail.value.practitioner.id);
 
-        let { detail: intakeData } = await scheduleStore.queryIntake({ pid: detail.value.patient.pid });
+        let { detail: intakeData, consents } = await scheduleStore.queryIntake({ pid: detail.value.patient.pid });
         intakeForm.value = intakeData;
+        intakeConsents.value = (consents || []).filter((item) => item.source === 'intake');
         showIntake.value = intakeData ? false : true;
 
         fields.value = clinic.value.detail.intake_fields || [];

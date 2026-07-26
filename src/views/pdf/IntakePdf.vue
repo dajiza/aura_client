@@ -68,12 +68,18 @@
             </template>
             <template v-if="fields.includes('Consent and signature')">
                 <div class="line"></div>
-                <a-form-item class="width-full" label="Consent">
+                <template v-if="consents?.length">
+                    <div class="width-full" v-for="record in consents" :key="record.id">
+                        <div class="consent-name">{{ record.template_name }}</div>
+                        <div class="consent-body">{{ record.body }}</div>
+                    </div>
+                </template>
+                <a-form-item class="width-full" label="Consent" v-else>
                     {{ consent }}
                 </a-form-item>
                 <a-form-item class="width-full" label="Signature" style="margin-top: 20px">
-                    <img :src="formState.name_sign" alt="" style="width: 250px" v-if="formState.name_sign" />
-                    <div v-else>{{ formState.name_type }}</div>
+                    <img :src="signatureImage" alt="" style="width: 250px" v-if="signatureImage" />
+                    <div v-else>{{ signatureName }}</div>
                 </a-form-item>
             </template>
         </a-form>
@@ -82,12 +88,10 @@
 </template>
 
 <script setup lang="ts">
-    import _ from 'lodash';
-    // import { onMounted, ref, reactive, toRaw } from 'vue';
-    // import { useUserStore } from '/@/store/modules/system/user';
+    import { computed } from 'vue';
     import moment from 'moment-timezone';
 
-    defineProps({
+    const props = defineProps({
         fields: {
             type: Object,
             default: {},
@@ -108,7 +112,14 @@
             type: String,
             default: '',
         },
+        consents: {
+            type: Array,
+            default: () => [],
+        },
     });
+
+    const signatureImage = computed(() => props.consents?.[0]?.name_sign || props.formState?.name_sign);
+    const signatureName = computed(() => props.consents?.[0]?.name_type || props.formState?.name_type);
 </script>
 
 <style lang="scss" scoped>
@@ -140,6 +151,17 @@
             color: #00796b;
             font-weight: bold;
             font-size: 30px;
+        }
+        .consent-name {
+            margin-top: 12px;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        .consent-body {
+            margin-top: 8px;
+            margin-bottom: 16px;
+            white-space: pre-wrap;
+            line-height: 1.7;
         }
         .line {
             margin: 20px 0;

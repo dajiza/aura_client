@@ -85,27 +85,28 @@
                         <a-textarea v-model:value="formState.allergy" placeholder="" :rows="4" />
                     </a-form-item>
                 </template>
-                <template v-if="fields.includes('Consent and signature')">
+                <template v-if="consentRequired">
                     <a-form-item class="width-850" label="Consent">
-                        <a-textarea class="consent" v-model:value="consent" disabled :auto-size="true" />
-                        <a-checkbox v-model:checked="checked" style="margin-top: 20px">I agree to the above terms</a-checkbox>
+                        <div class="consent-block" v-for="template in consentTemplates" :key="template.id">
+                            <div class="consent-name">{{ template.name }}</div>
+                            <div class="consent-body">{{ template.body }}</div>
+                            <a-checkbox v-model:checked="agreed[template.id]">I have read and agree to this consent form</a-checkbox>
+                        </div>
                         <div style="margin-top: 40px">Digital signature</div>
-                        <div
-                            style="
-                                margin-top: 10px;
-                                margin-bottom: 10px;
-                                color: #757575;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                            "
-                        >
-                            Please type or sign your full name
+                        <div class="signature-prompt">
+                            <span>Please type or sign your full name</span>
+                            <a-radio-group v-model:value="signActive" button-style="solid" size="small" @change="onSignModeChange">
+                                <a-radio-button value="Type">Type</a-radio-button>
+                                <a-radio-button value="Draw">Draw</a-radio-button>
+                            </a-radio-group>
                         </div>
-                        <canvas id="signature-pad" class="signature-pad"></canvas>
-                        <div style="text-align: right; width: 100%; margin-top: -32px; padding-right: 15px">
-                            <a-button type="primary" size="small" @click="clearSign">Clear</a-button>
-                        </div>
+                        <a-textarea v-if="signActive === 'Type'" v-model:value="nameType" placeholder="Type your full name" :rows="4" />
+                        <template v-else>
+                            <canvas id="signature-pad" class="signature-pad"></canvas>
+                            <div style="text-align: right; width: 100%; margin-top: -32px; padding-right: 15px">
+                                <a-button type="primary" size="small" @click="clearSign">Clear</a-button>
+                            </div>
+                        </template>
                     </a-form-item>
                 </template>
                 <p class="info">
@@ -124,7 +125,7 @@
                         type="primary"
                         size="large"
                         @click="onSubmit"
-                        :disabled="!checked && fields.includes('Consent and signature')"
+                        :disabled="consentRequired && !allAgreed"
                     >
                         Submit
                     </a-button>
@@ -136,8 +137,7 @@
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
     const loginDrawer = ref();
-    import axios from 'axios';
-    import { onMounted, ref } from 'vue';
+    import { computed, nextTick, onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { useRoute } from 'vue-router';
@@ -145,24 +145,32 @@
     import SignaturePad from 'signature_pad';
     import { message } from 'ant-design-vue';
     import { useUserStore } from '@/stores/modules/system/user';
+    import { createPatientConsents, fetchIntakeConsentTemplates } from '@/utils/consent';
     import _ from 'lodash';
-    const userStore = useUserStore();
     import moment from 'moment-timezone';
-    let { isMobile } = userStore;
+
+    const userStore = useUserStore();
+    const isMobile = computed(() => userStore.isMobile);
+    // Must track the store reactively — a one-time ref(getUid) stays empty and causes login loops.
+    const uid = computed(() => userStore.getUid);
+    const userInfo = computed(() => userStore.getUserInfo);
 
     const route = useRoute();
     let pid = ref(route.query.pid);
     let hospital = ref({});
     let patient = ref({});
     const fields = ref([]);
-    const consent = ref('');
-    const signActive = ref('Type');
+    const consentTemplates = ref([]);
+    const agreed = ref({});
+    const signActive = ref('Draw');
+    const nameType = ref('');
     const signaturePad = ref();
-    const checked = ref(false);
     const formRef = ref();
-    const uid = ref(useUserStore().getUid);
-    // const hid = ref(useUserStore().getHid);
-    const userInfo = ref(useUserStore().getUserInfo);
+    // Consent section is only required when the clinic enabled it and configured templates.
+    const consentRequired = computed(() => fields.value.includes('Consent and signature') && consentTemplates.value.length > 0);
+    const allAgreed = computed(
+        () => consentTemplates.value.length > 0 && consentTemplates.value.every((template) => !!agreed.value[template.id])
+    );
 
     let formState = ref({
         first_name: '',
@@ -202,29 +210,39 @@
         SmartLoading.show();
         let { data: patientData } = await supabase.from('patients').select('*').eq('pid', pid.value);
 
-        if (patientData.length == 0 || patientData[0].email != userInfo.value.email) {
-            router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
+        if (!patientData?.length || patientData[0].email != userInfo.value.email) {
+            SmartLoading.hide();
+            router.push({ path: '/intake-fail', query: { hid: patientData?.[0]?.hid || patient.value.hid } });
             return;
         }
         patient.value = patientData[0];
 
         let { data: hospitalData } = await supabase.from('hospitals').select('*').eq('hid', patient.value.hid);
 
-        if (hospitalData.length == 0) {
+        if (!hospitalData?.length) {
+            SmartLoading.hide();
             router.push({ path: '/intake-fail', query: { hid: patient.value.hid } });
             return;
         }
         let { data: intakeData } = await supabase.from('intake').select('*').eq('pid', pid.value).eq('hid', patient.value.hid);
 
-        if (intakeData.length > 0) {
+        if (intakeData?.length > 0) {
+            SmartLoading.hide();
             message.warning('You have already filled out your intake form.');
             router.push({ path: '/intake-success', query: { pid: pid.value } });
             return;
         }
 
         fields.value = hospitalData[0].intake_fields || [];
-        consent.value = hospitalData[0].intake_consent || '';
         hospital.value = hospitalData[0];
+        try {
+            consentTemplates.value = await fetchIntakeConsentTemplates(patient.value.hid);
+        } catch (error) {
+            console.error('Failed to load consent templates', error);
+            message.error('Failed to load consent forms');
+            consentTemplates.value = [];
+        }
+        agreed.value = Object.fromEntries(consentTemplates.value.map((template) => [template.id, false]));
 
         formState.value = {
             first_name: patient.value.first_name,
@@ -247,18 +265,39 @@
             pid: pid.value,
         };
         SmartLoading.hide();
+        if (consentRequired.value && signActive.value === 'Draw') {
+            await nextTick();
+            initSignaturePad();
+        }
+    };
+    const initSignaturePad = () => {
+        const canvas = document.getElementById('signature-pad');
+        if (!canvas) return;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        signaturePad.value = new SignaturePad(canvas, {
+            backgroundColor: '#eee',
+        });
+    };
+    const onSignModeChange = async () => {
+        if (signActive.value !== 'Draw') return;
+        await nextTick();
+        initSignaturePad();
     };
     const clearSign = () => {
-        signaturePad.value.clear();
+        signaturePad.value?.clear();
     };
     const uploadSign = async () => {
         const sign = signaturePad.value.toDataURL();
         let fileName = moment().valueOf().toString() + _.random(1000000, 9999999) + '.png';
         const file = base64ToFile(sign, fileName);
-        const { data } = await supabase.storage.from('image').upload(fileName, file, {
+        const { data, error } = await supabase.storage.from('image').upload(fileName, file, {
             cacheControl: '3600',
             upsert: false,
         });
+        if (error || !data?.fullPath) {
+            throw new Error(error?.message || 'Failed to upload signature');
+        }
         return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + data.fullPath;
     };
 
@@ -286,13 +325,32 @@
             .then(async () => {
                 let form = _.cloneDeep(formState.value);
                 form.birth = moment(form.birth, 'MM/DD/YYYY').format('YYYYMMDD');
-                if (fields.value.includes('Consent and signature')) {
-                    if (signaturePad.value.isEmpty()) {
-                        message.warning('Please sign your full name');
+                let signature = null;
+                if (consentRequired.value) {
+                    if (!allAgreed.value) {
+                        message.warning('Please agree to each consent form');
                         SmartLoading.hide();
                         return;
+                    }
+                    if (signActive.value === 'Type') {
+                        const typed = nameType.value.trim();
+                        if (!typed) {
+                            message.warning('Please type your full name');
+                            SmartLoading.hide();
+                            return;
+                        }
+                        form.name_type = typed;
+                        form.name_sign = null;
+                        signature = { name_type: typed };
                     } else {
+                        if (!signaturePad.value || signaturePad.value.isEmpty()) {
+                            message.warning('Please sign your full name');
+                            SmartLoading.hide();
+                            return;
+                        }
                         form.name_sign = await uploadSign();
+                        form.name_type = null;
+                        signature = { name_sign: form.name_sign };
                     }
                 }
 
@@ -309,44 +367,73 @@
                     SmartLoading.hide();
                     return;
                 }
+
+                if (signature) {
+                    try {
+                        await createPatientConsents({
+                            hid: form.hid,
+                            pid: pid.value,
+                            templateIds: consentTemplates.value.map((template) => template.id),
+                            signature,
+                            source: 'intake',
+                        });
+                    } catch (consentError) {
+                        // Roll back the intake row so the patient can retry a complete submit.
+                        await supabase.from('intake').delete().eq('pid', pid.value).eq('hid', form.hid);
+                        message.error(consentError?.message || 'Failed to save consent forms');
+                        SmartLoading.hide();
+                        return;
+                    }
+                }
+
                 message.success('Intake form saved!');
                 SmartLoading.hide();
                 router.push({ path: '/intake-success', query: { pid: pid.value } });
             })
             .catch((error) => {
                 console.log('🚀 ~ onSubmit ~ error:', error);
-                message.warning('Please complete the data');
+                if (error?.errorFields) {
+                    message.warning('Please complete the data');
+                } else {
+                    message.error(error?.message || 'Failed to save intake form');
+                }
                 SmartLoading.hide();
             });
     };
     onMounted(async () => {
+        // boot() may still be writing uid after the first paint.
+        for (let i = 0; i < 40 && !uid.value; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
         if (!uid.value) {
             authClient.redirectToLoginPage({
                 postLoginRedirectUrl: window.location.href || import.meta.env.VITE_CLIENT_APP_URL,
             });
-        } else {
-            await getData();
+            return;
         }
-        let canvas = document.getElementById('signature-pad');
-
-        // 获取Canvas元素的实际宽度和高度
-        const canvasWidth = canvas.offsetWidth;
-        const canvasHeight = canvas.offsetHeight;
-        // 将Canvas的实际宽度和高度设置为获取到的值
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-
-        signaturePad.value = new SignaturePad(canvas, {
-            backgroundColor: '#eee', // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
-        });
+        await getData();
     });
 </script>
 <style lang="scss" scoped>
     .container {
-        ::v-deep .consent.ant-input-disabled {
-            border: none;
-            background-color: transparent;
-            color: #757575;
+        .consent-block {
+            margin-bottom: 20px;
+            padding: 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 12px;
+            .consent-name {
+                margin-bottom: 10px;
+                font-weight: 500;
+                font-size: 16px;
+            }
+            .consent-body {
+                margin-bottom: 12px;
+                max-height: 280px;
+                overflow-y: auto;
+                color: #49454f;
+                white-space: pre-wrap;
+                line-height: 1.7;
+            }
         }
         .top {
             padding: 20px;
@@ -369,6 +456,16 @@
         }
         .tip {
             color: #757575;
+        }
+        .signature-prompt {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #757575;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .width-full {
             width: 100%;
