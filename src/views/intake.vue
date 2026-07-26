@@ -85,10 +85,13 @@
                         <a-textarea v-model:value="formState.allergy" placeholder="" :rows="4" />
                     </a-form-item>
                 </template>
-                <template v-if="fields.includes('Consent and signature')">
+                <template v-if="consentRequired">
                     <a-form-item class="width-850" label="Consent">
-                        <a-textarea class="consent" v-model:value="consent" disabled :auto-size="true" />
-                        <a-checkbox v-model:checked="checked" style="margin-top: 20px">I agree to the above terms</a-checkbox>
+                        <div class="consent-block" v-for="template in consentTemplates" :key="template.id">
+                            <div class="consent-name">{{ template.name }}</div>
+                            <div class="consent-body">{{ template.body }}</div>
+                            <a-checkbox v-model:checked="agreed[template.id]">I have read and agree to this consent form</a-checkbox>
+                        </div>
                         <div style="margin-top: 40px">Digital signature</div>
                         <div
                             style="
@@ -124,7 +127,7 @@
                         type="primary"
                         size="large"
                         @click="onSubmit"
-                        :disabled="!checked && fields.includes('Consent and signature')"
+                        :disabled="consentRequired && !allAgreed"
                     >
                         Submit
                     </a-button>
@@ -136,8 +139,7 @@
 <script setup>
     import LoginDrawer from '@/components/LoginDrawer.vue';
     const loginDrawer = ref();
-    import axios from 'axios';
-    import { onMounted, ref } from 'vue';
+    import { computed, nextTick, onMounted, ref } from 'vue';
     import { SmartLoading } from '@/components/smart-loading';
     import router from '@/routers/index';
     import { useRoute } from 'vue-router';
@@ -145,6 +147,7 @@
     import SignaturePad from 'signature_pad';
     import { message } from 'ant-design-vue';
     import { useUserStore } from '@/stores/modules/system/user';
+    import { createPatientConsents, fetchIntakeConsentTemplates } from '@/utils/consent';
     import _ from 'lodash';
     const userStore = useUserStore();
     import moment from 'moment-timezone';
@@ -155,14 +158,17 @@
     let hospital = ref({});
     let patient = ref({});
     const fields = ref([]);
-    const consent = ref('');
-    const signActive = ref('Type');
+    const consentTemplates = ref([]);
+    const agreed = ref({});
     const signaturePad = ref();
-    const checked = ref(false);
     const formRef = ref();
     const uid = ref(useUserStore().getUid);
-    // const hid = ref(useUserStore().getHid);
     const userInfo = ref(useUserStore().getUserInfo);
+    // Consent section is only required when the clinic enabled it and configured templates.
+    const consentRequired = computed(() => fields.value.includes('Consent and signature') && consentTemplates.value.length > 0);
+    const allAgreed = computed(
+        () => consentTemplates.value.length > 0 && consentTemplates.value.every((template) => !!agreed.value[template.id])
+    );
 
     let formState = ref({
         first_name: '',
@@ -223,8 +229,9 @@
         }
 
         fields.value = hospitalData[0].intake_fields || [];
-        consent.value = hospitalData[0].intake_consent || '';
         hospital.value = hospitalData[0];
+        consentTemplates.value = await fetchIntakeConsentTemplates(patient.value.hid);
+        agreed.value = Object.fromEntries(consentTemplates.value.map((template) => [template.id, false]));
 
         formState.value = {
             first_name: patient.value.first_name,
@@ -247,18 +254,34 @@
             pid: pid.value,
         };
         SmartLoading.hide();
+        if (consentRequired.value) {
+            await nextTick();
+            initSignaturePad();
+        }
+    };
+    const initSignaturePad = () => {
+        const canvas = document.getElementById('signature-pad');
+        if (!canvas) return;
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        signaturePad.value = new SignaturePad(canvas, {
+            backgroundColor: '#eee',
+        });
     };
     const clearSign = () => {
-        signaturePad.value.clear();
+        signaturePad.value?.clear();
     };
     const uploadSign = async () => {
         const sign = signaturePad.value.toDataURL();
         let fileName = moment().valueOf().toString() + _.random(1000000, 9999999) + '.png';
         const file = base64ToFile(sign, fileName);
-        const { data } = await supabase.storage.from('image').upload(fileName, file, {
+        const { data, error } = await supabase.storage.from('image').upload(fileName, file, {
             cacheControl: '3600',
             upsert: false,
         });
+        if (error || !data?.fullPath) {
+            throw new Error(error?.message || 'Failed to upload signature');
+        }
         return import.meta.env.VITE_APP_SUPABASE_STORAGE_URL + data.fullPath;
     };
 
@@ -286,14 +309,20 @@
             .then(async () => {
                 let form = _.cloneDeep(formState.value);
                 form.birth = moment(form.birth, 'MM/DD/YYYY').format('YYYYMMDD');
-                if (fields.value.includes('Consent and signature')) {
-                    if (signaturePad.value.isEmpty()) {
+                let signature = null;
+                if (consentRequired.value) {
+                    if (!allAgreed.value) {
+                        message.warning('Please agree to each consent form');
+                        SmartLoading.hide();
+                        return;
+                    }
+                    if (!signaturePad.value || signaturePad.value.isEmpty()) {
                         message.warning('Please sign your full name');
                         SmartLoading.hide();
                         return;
-                    } else {
-                        form.name_sign = await uploadSign();
                     }
+                    form.name_sign = await uploadSign();
+                    signature = { name_sign: form.name_sign };
                 }
 
                 form.pid = pid.value;
@@ -309,13 +338,34 @@
                     SmartLoading.hide();
                     return;
                 }
+
+                if (signature) {
+                    try {
+                        await createPatientConsents({
+                            hid: form.hid,
+                            pid: pid.value,
+                            templateIds: consentTemplates.value.map((template) => template.id),
+                            signature,
+                            source: 'intake',
+                        });
+                    } catch (consentError) {
+                        message.error(consentError?.message || 'Failed to save consent forms');
+                        SmartLoading.hide();
+                        return;
+                    }
+                }
+
                 message.success('Intake form saved!');
                 SmartLoading.hide();
                 router.push({ path: '/intake-success', query: { pid: pid.value } });
             })
             .catch((error) => {
                 console.log('🚀 ~ onSubmit ~ error:', error);
-                message.warning('Please complete the data');
+                if (error?.errorFields) {
+                    message.warning('Please complete the data');
+                } else {
+                    message.error(error?.message || 'Failed to save intake form');
+                }
                 SmartLoading.hide();
             });
     };
@@ -327,26 +377,28 @@
         } else {
             await getData();
         }
-        let canvas = document.getElementById('signature-pad');
-
-        // 获取Canvas元素的实际宽度和高度
-        const canvasWidth = canvas.offsetWidth;
-        const canvasHeight = canvas.offsetHeight;
-        // 将Canvas的实际宽度和高度设置为获取到的值
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-
-        signaturePad.value = new SignaturePad(canvas, {
-            backgroundColor: '#eee', // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
-        });
     });
 </script>
 <style lang="scss" scoped>
     .container {
-        ::v-deep .consent.ant-input-disabled {
-            border: none;
-            background-color: transparent;
-            color: #757575;
+        .consent-block {
+            margin-bottom: 20px;
+            padding: 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 12px;
+            .consent-name {
+                margin-bottom: 10px;
+                font-weight: 500;
+                font-size: 16px;
+            }
+            .consent-body {
+                margin-bottom: 12px;
+                max-height: 280px;
+                overflow-y: auto;
+                color: #49454f;
+                white-space: pre-wrap;
+                line-height: 1.7;
+            }
         }
         .top {
             padding: 20px;
