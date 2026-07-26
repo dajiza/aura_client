@@ -1,14 +1,6 @@
 // 页面路由
 export default [
     {
-        path: '/:pathMatch(.*)',
-        name: 'all',
-        meta: {
-            title: 'Home',
-        },
-        component: () => import('@/views/home.vue'),
-    },
-    {
         path: '/',
         name: 'home',
         meta: {
@@ -404,7 +396,7 @@ export default [
     },
     {
         path: '/web/schedule/intake',
-        name: 'web-intake-form',
+        name: 'web-schedule-intake',
         meta: {
             title: 'Intake Form',
         },
@@ -412,7 +404,7 @@ export default [
     },
     {
         path: '/web/schedule/intake-success',
-        name: 'web-intake-success',
+        name: 'web-schedule-intake-success',
         meta: {
             title: 'Intake success',
         },
@@ -420,7 +412,7 @@ export default [
     },
     {
         path: '/web/schedule/intake-fail',
-        name: 'web-intake-fail',
+        name: 'web-schedule-intake-fail',
         meta: {
             title: 'Intake fail',
         },
@@ -441,5 +433,13 @@ export default [
             title: 'Schedule',
         },
         component: () => import('@/views/schedule/reschedule.vue'),
+    },
+    {
+        path: '/:pathMatch(.*)',
+        name: 'all',
+        meta: {
+            title: 'Home',
+        },
+        component: () => import('@/views/home.vue'),
     },
 ];

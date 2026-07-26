@@ -16,7 +16,15 @@ export async function getSupabaseClient(info: AuthenticationInfo): Promise<Supab
         },
     });
 
-    const { token: supabaseToken } = await response.json();
+    if (!response.ok) {
+        throw new Error(`exchange-token failed (${response.status})`);
+    }
+
+    const payload = await response.json();
+    const supabaseToken = payload?.token;
+    if (!supabaseToken) {
+        throw new Error('exchange-token returned no token');
+    }
     return createSupabaseClient(import.meta.env.VITE_APP_SUPABASE_URL, import.meta.env.VITE_APP_SUPABASE_ANON_KEY, {
         global: {
             headers: {

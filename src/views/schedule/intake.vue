@@ -93,22 +93,20 @@
                             <a-checkbox v-model:checked="agreed[template.id]">I have read and agree to this consent form</a-checkbox>
                         </div>
                         <div style="margin-top: 40px">Digital signature</div>
-                        <div
-                            style="
-                                margin-top: 10px;
-                                margin-bottom: 10px;
-                                color: #757575;
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                            "
-                        >
-                            Please type or sign your full name
+                        <div class="signature-prompt">
+                            <span>Please type or sign your full name</span>
+                            <a-radio-group v-model:value="signActive" button-style="solid" size="small" @change="onSignModeChange">
+                                <a-radio-button value="Type">Type</a-radio-button>
+                                <a-radio-button value="Draw">Draw</a-radio-button>
+                            </a-radio-group>
                         </div>
-                        <canvas id="signature-pad" class="signature-pad"></canvas>
-                        <div style="text-align: right; width: 100%; margin-top: -32px; padding-right: 15px">
-                            <a-button type="primary" size="small" @click="clearSign">Clear</a-button>
-                        </div>
+                        <a-textarea v-if="signActive === 'Type'" v-model:value="nameType" placeholder="Type your full name" :rows="4" />
+                        <template v-else>
+                            <canvas id="signature-pad" class="signature-pad"></canvas>
+                            <div style="text-align: right; width: 100%; margin-top: -32px; padding-right: 15px">
+                                <a-button type="primary" size="small" @click="clearSign">Clear</a-button>
+                            </div>
+                        </template>
                     </a-form-item>
                 </template>
                 <p class="info">
@@ -144,11 +142,13 @@
     import SignaturePad from 'signature_pad';
     import { message } from 'ant-design-vue';
     import { useUserStore } from '@/stores/modules/system/user';
-    import _ from 'lodash';
-    const userStore = useUserStore();
-    import moment from 'moment-timezone';
-    let { isMobile } = userStore;
+    import { supabase } from '@/utils/supabase';
     import { useScheduleStore } from '@/stores/modules/schedule';
+    import _ from 'lodash';
+    import moment from 'moment-timezone';
+
+    const userStore = useUserStore();
+    const isMobile = computed(() => userStore.isMobile);
 
     const scheduleStore = useScheduleStore();
     const route = useRoute();
@@ -159,6 +159,8 @@
     const fields = ref([]);
     const consentTemplates = ref([]);
     const agreed = ref({});
+    const signActive = ref('Draw');
+    const nameType = ref('');
     const signaturePad = ref();
     const formRef = ref();
     const consentRequired = computed(() => fields.value.includes('Consent and signature') && consentTemplates.value.length > 0);
@@ -201,6 +203,7 @@
         SmartLoading.show();
         let { detail: patientData } = await scheduleStore.queryPatient({ pid: pid.value });
         if (!patientData) {
+            SmartLoading.hide();
             // router.push({ path: '/schedule/intake-fail', query: { hid: hid.value } });
             return;
         }
@@ -208,12 +211,14 @@
 
         let { detail: hospitalData } = await scheduleStore.queryHospital({ hid: hid.value });
         if (!hospitalData) {
+            SmartLoading.hide();
             router.push({ path: '/schedule/intake-fail', query: { hid: hid.value } });
             return;
         }
 
         let { detail: intakeData } = await scheduleStore.queryIntake({ pid: pid.value });
         if (intakeData) {
+            SmartLoading.hide();
             message.warning('You have already filled out your intake form.');
             // router.push({ path: '/schedule/intake-success', query: { hid: hid.value } });
             return;
@@ -221,7 +226,13 @@
 
         fields.value = hospitalData.intake_fields || [];
         hospital.value = hospitalData;
-        consentTemplates.value = await scheduleStore.queryConsentTemplates({ hid: hid.value });
+        try {
+            consentTemplates.value = await scheduleStore.queryConsentTemplates({ hid: hid.value });
+        } catch (error) {
+            console.error('Failed to load consent templates', error);
+            message.error('Failed to load consent forms');
+            consentTemplates.value = [];
+        }
         agreed.value = Object.fromEntries(consentTemplates.value.map((template) => [template.id, false]));
 
         formState.value = {
@@ -245,7 +256,7 @@
             pid: pid.value,
         };
         SmartLoading.hide();
-        if (consentRequired.value) {
+        if (consentRequired.value && signActive.value === 'Draw') {
             await nextTick();
             initSignaturePad();
         }
@@ -258,6 +269,11 @@
         signaturePad.value = new SignaturePad(canvas, {
             backgroundColor: '#eee',
         });
+    };
+    const onSignModeChange = async () => {
+        if (signActive.value !== 'Draw') return;
+        await nextTick();
+        initSignaturePad();
     };
     const clearSign = () => {
         signaturePad.value?.clear();
@@ -310,13 +326,26 @@
                         SmartLoading.hide();
                         return;
                     }
-                    if (!signaturePad.value || signaturePad.value.isEmpty()) {
-                        message.warning('Please sign your full name');
-                        SmartLoading.hide();
-                        return;
+                    if (signActive.value === 'Type') {
+                        const typed = nameType.value.trim();
+                        if (!typed) {
+                            message.warning('Please type your full name');
+                            SmartLoading.hide();
+                            return;
+                        }
+                        form.name_type = typed;
+                        form.name_sign = null;
+                        signature = { name_type: typed };
+                    } else {
+                        if (!signaturePad.value || signaturePad.value.isEmpty()) {
+                            message.warning('Please sign your full name');
+                            SmartLoading.hide();
+                            return;
+                        }
+                        form.name_sign = await uploadSign();
+                        form.name_type = null;
+                        signature = { name_sign: form.name_sign };
                     }
-                    form.name_sign = await uploadSign();
-                    signature = { name_sign: form.name_sign };
                 }
                 form.pid = pid.value;
                 let { error } = await scheduleStore.createIntake(form);
@@ -343,6 +372,10 @@
                             source: 'intake',
                         });
                     } catch (consentError) {
+                        // Roll back intake so a failed consent write does not block retry.
+                        if (supabase) {
+                            await supabase.from('intake').delete().eq('pid', pid.value).eq('hid', form.hid || hid.value);
+                        }
                         message.error(consentError?.message || 'Failed to save consent forms');
                         SmartLoading.hide();
                         return;
@@ -409,6 +442,16 @@
         }
         .tip {
             color: #757575;
+        }
+        .signature-prompt {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #757575;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .width-full {
             width: 100%;
